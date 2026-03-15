@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Instructional Design | Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="flex" style="align-items: center; justify-content: center; min-height: 100vh;">
+    
+    <div class="card animate-fade-in" style="width: 100%; max-width: 400px;">
+        <h2 class="text-center">📚 AI Instructional<br>Design System</h2>
+        <p class="text-center text-muted form-group">Sign in or register to continue</p>
+        
+        <!-- Toggle Tabs -->
+        <div class="flex form-group">
+            <button class="btn btn-outline active" style="flex:1" id="tab-login" onclick="toggleAuth('login')">Login</button>
+            <button class="btn btn-outline" style="flex:1" id="tab-register" onclick="toggleAuth('register')">Register</button>
+        </div>
+        
+        <div id="error-msg" class="hidden" style="color: var(--danger); margin-bottom: 1rem; text-align: center; font-weight: 500;"></div>
+
+        <!-- Login Form -->
+        <form id="login-form">
+            <div class="form-group">
+                <label>Email ID</label>
+                <input type="email" id="login-email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="login-password" class="form-control" required>
+            </div>
+            <div class="form-group mt-2">
+                <button type="submit" class="btn btn-primary" style="width:100%" id="login-btn">Login</button>
+            </div>
+        </form>
+
+        <!-- Register Form -->
+        <form id="register-form" class="hidden">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="reg-name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Email ID</label>
+                <input type="email" id="reg-email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="reg-password" class="form-control" required>
+            </div>
+            <div class="form-group mt-2">
+                <button type="submit" class="btn btn-secondary" style="width:100%" id="reg-btn">Register</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

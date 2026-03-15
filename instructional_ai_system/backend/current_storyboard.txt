@@ -1,0 +1,213 @@
+# STORYBOARD — Generative AI
+
+* * *
+
+Module 1: Introduction to Generative AI<br>Topic: Definition and Applications of Generative AI
+
+**Screen 1.1 Title:** What is Generative AI?
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Definition of Generative AI: An introduction to Generative AI as a subset of artificial intelligence focused on creating data that imitates real-world information. It utilizes advanced algorithms to generate synthetic data with high resemblance to real data. Learn the core principles and applications of Generative AI in different fields. • Historical Evolution: Delve into the foundation of Generative AI, tracing back to its inception in the 1990s where pioneering researchers first explored generative models. Explore key milestones and contributors in the advancement of Generative AI, leading up to its modern-day applications. • Applications of Generative AI: Gain insights into the diverse use cases of Generative AI across domains like image and video processing, natural language understanding, and music generation. Understand the potential of Generative AI for innovation and exploration in various industries. | Welcome to Module 1: Introduction to Generative AI. This module will cover the basics of Generative AI, including its definition, history, and applications. Generative AI is a fascinating realm of artificial intelligence that harnesses powerful algorithms to create new, synthetic data with striking similarities to real-world information. The roots of Generative AI stretch back to the 1990s when pioneering researchers began delving into the notion of generative models. Though these initial models had their limitations, they paved the way for the sophisticated Generative AI models flourishing today. Spanning diverse domains such as image and video processing, natural language processing, and music generation, Generative AI holds immense promise for innovation and exploration. | • Visual description: A simple, animated logo of a Generative AI model appears on the screen, with a subtle background of code snippets and mathematical equations. The logo is surrounded by a circle with a radius of 200 pixels, and the text "Generative AI" is written in a modern, sans-serif font above the logo. The layout is clean and minimalistic, with a white background and a subtle gradient effect. The navigation instructions are to click on the "Next" button to proceed to the next screen. |
+
+**Screen 1.2 Title:** Brief History of Generative AI
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Key milestones in the history of Generative AI<br>• Contributions of pioneering researchers in the field | Generative AI has a rich history that spans over two decades. In the 1990s, researchers initially delved into the concept of generative models. An early milestone in Generative AI's history was the introduction of the Generative Adversarial Network (GAN) in 2014 by Ian Goodfellow and his team. GANs marked a substantial advancement in Generative AI, facilitating the creation of authentic synthetic data. Subsequently, Generative AI has progressed steadily, with researchers offering substantial contributions to the field. | • Visual description: A timeline of Generative AI milestones appears on the screen, with key events and researchers highlighted in a bold, blue color. The timeline is interactive, allowing learners to click on each milestone to learn more about it. The layout is clean and minimalistic, with a white background and a subtle gradient effect. The navigation instructions are to click on the "Next" button to proceed to the next screen. |
+
+**Screen 1.3 Title:** Generative AI vs. Other AI Types
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Comparison of Generative AI with other AI types<br>• Key differences and similarities | Generative AI is a type of artificial intelligence that is distinct from other AI types. While all AI systems are designed to perform specific tasks, Generative AI is unique in its ability to generate new, synthetic data that resembles real-world data. One of the key differences between Generative AI and other AI types is its ability to learn from data and generate new data that is not present in the training dataset. This ability makes Generative AI a powerful tool for data augmentation and other applications. | • Visual description: A diagram comparing Generative AI with other AI types appears on the screen, with key differences and similarities highlighted in a bold, blue color. The diagram is interactive, allowing learners to click on each AI type to learn more about it. The layout is clean and minimalistic, with a white background and a subtle gradient effect. The navigation instructions are to click on the "Next" button to proceed to the next screen. |
+
+**Screen 1.4 Title:** Key Benefits and Challenges of Generative AI
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Enhancing the Understanding of Generative AI's Power and Nuances<br>• Delving Deeper into the Transformative Capabilities | Generative AI unveils a realm of boundless creativity, crafting synthetic data that mirrors reality with stunning accuracy. This transformative capability positions Generative AI as a dynamic catalyst for data enrichment and innovative ventures. Nonetheless, within its boundless potential lies the challenge of ensuring that the generated data faithfully reflects the complexities of the real world, guarding against biases and inaccuracies. | | • Visual description: An innovative 3D visualization showcasing the transformative power of Generative AI emerges on the screen. It dynamically illustrates the boundless creativity of Generative AI in crafting synthetic data that mirrors reality with precision. This immersive experience positions Generative AI as a vibrant tapestry of data enrichment and exploration. However, within its transformative potential lies the challenge of ensuring that the generated data faithfully reflects the complexities of the real world, guarding against biases and inaccuracies. | |
+
+**Screen 1.5 Title:** Conclusion
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Summary of key points<br>• Call to action | In Module 1, we have explored the fundamentals of Generative AI, encompassing its definition, historical evolution, and practical applications. Generative AI, a branch of artificial intelligence, employs algorithms to produce synthetic data mirroring real-world information. While it holds promise in generating new data not present in training sets, it also poses challenges in faithfully representing the complexities of the real world. | • Visual description: A summary of the key points appears on the screen, with a call to action to proceed to the next module. The layout is clean and minimalistic, with a white background and a subtle gradient effect. The navigation instructions are to click on the "Next" button to proceed to the next module. |
+
+**Screen 1.6 Title:** Case Study: Google Imagen
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Case study of Google Imagen<br>• Key takeaways | Google Imagen is a Generative AI model that has the ability to generate new, synthetic images from text prompts. It uses a combination of natural language processing and computer vision techniques to generate images that are indistinguishable from real-world images. | • Visual description: A screenshot of Google Imagen appears on the screen, with a brief case study of the model's capabilities. The layout is clean and minimalistic, with a white background and a subtle gradient effect. The navigation instructions are to click on the "Next" button to proceed to the next screen. |
+
+**Screen 1.7 Title:** Interactive Scenario: Integrating Generative AI in Apps
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Interactive scenario of integrating Generative AI in apps<br>• Key challenges and limitations | This interactive scenario will guide you through the process of integrating Generative AI in apps. You will learn about the key challenges and limitations of Generative AI and how to overcome them. | • Visual description: An interactive scenario appears on the screen, with learners able to click on various options to learn more about integrating Generative AI in apps. The layout is clean and minimalistic, with a white background and a subtle gradient effect. The navigation instructions are to click on the "Next" button to proceed to the next screen. |
+
+**Screen 1.8 Title:** Assessment: Multiple-Choice Questions
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Multiple-choice questions on Generative AI basics<br>• Key takeaways | This assessment will test your understanding of the basics of Generative AI. You will be presented with multiple-choice questions that cover key concepts and terminology. | • Visual description: A multiple-choice question appears on the screen, with learners able to select from various options and submit their answers. The layout is clean and minimalistic, with a white background and a subtle gradient effect. The navigation instructions are to click on the "Submit" button to submit your answers. |
+
+* * *
+
+Module 2: Generative Adversarial Networks (GANs)<br>Topic: GAN Architecture and Types
+
+**Screen 2.1 Title:** Introduction to GANs
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Exploring the essence of Generative Adversarial Networks (GANs)<br>• Understanding the fundamental components of a GAN: generator and discriminator<br>• Applications of GANs in image and video processing | GANs are a type of deep learning algorithm that consists of two neural networks: a generator and a discriminator. The generator creates new data that resembles the training data, while the discriminator determines whether the new data is real or fake. GANs have been widely used in image and video processing applications, such as generating realistic images and videos. In this module, we will delve into the architecture and types of GANs. | • Visualize a diagram of a GAN architecture, with the generator and discriminator networks highlighted<br>• Use a simple, colorful layout to make the diagram easy to understand<br>• Include navigation instructions to move to the next screen |
+
+**Screen 2.2 Title:** Types of GANs
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Diving into DCGAN (Deep Convolutional GAN)<br>• Unveiling Progressive GAN (PGAN) innovations<br>• Discovering BigGAN capabilities<br>• Exploring random noise usage in GANs | DCGAN is a type of GAN that uses deep convolutional neural networks to generate high-quality images. PGAN is a variant of GAN that uses a progressive growing strategy to improve the quality of generated images. BigGAN is a type of GAN that uses a large batch size and a powerful GPU to generate high-quality images. Random noise is a type of input used in GANs to generate new data. | • Create a table to compare the different types of GANs, with columns for architecture, applications, and limitations<br>• Use a dark background and light-colored text to make the table easy to read<br>• Include navigation instructions to move to the next screen |
+
+**Screen 2.3 Title:** GAN Architecture
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Unpacking the Generator architecture with transposed convolutional layers and batch normalization<br>• Analyzing the Discriminator architecture featuring convolutional layers and leaky ReLU activation<br>• Understanding the Loss function: binary cross-entropy | The generator architecture consists of transposed convolutional layers and batch normalization, which helps to generate high-quality images. The discriminator architecture consists of convolutional layers and leaky ReLU activation, which helps to distinguish between real and fake images. The loss function used in GANs is binary cross-entropy, which measures the difference between the predicted probabilities and the actual labels. | • Visualize a diagram of the generator and discriminator architectures, with the layers and activation functions highlighted<br>• Use a simple, colorful layout to make the diagram easy to understand<br>• Include navigation instructions to move to the next screen |
+
+**Screen 2.4 Title:** GAN Applications
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Mastering image-to-image translation applications<br>• Exploring image generation possibilities<br>• Diving into video generation scenarios<br>• Understanding data augmentation techniques | GANs have been widely used in various applications, including image-to-image translation, image generation, video generation, and data augmentation. Image-to-image translation involves transforming one image into another, while image generation involves creating new images from scratch. Video generation involves creating new videos from scratch, and data augmentation involves increasing the size of a dataset by applying transformations to the existing data. | • Create a flowchart to show the different applications of GANs, with arrows and text to illustrate the relationships between the different applications<br>• Use a dark background and light-colored text to make the flowchart easy to read<br>• Include navigation instructions to move to the next screen |
+
+**Screen 2.5 Title:** Challenges and Limitations
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Addressing mode collapse phenomena<br>• Mitigating vanishing gradient challenges<br>• Ensuring stabilized training procedures<br>• Enhancing interpretability in GAN models | GANs face various challenges and limitations, including mode collapse, vanishing gradients, unstable training, and limited interpretability. Mode collapse occurs when the generator produces limited variations of the same output. Vanishing gradients occur when the gradients of the loss function become very small, making it difficult to train the model. Unstable training occurs when the model oscillates between different modes, making it difficult to converge to a stable solution. Limited interpretability occurs when it is difficult to understand how the model makes predictions. | • Visualize a diagram to show the different challenges and limitations of GANs, with the challenges and limitations highlighted<br>• Use a simple, colorful layout to make the diagram easy to understand<br>• Include navigation instructions to move to the next screen |
+
+**Screen 2.6 Title:** Future Directions
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Enhancing strategies to combat mode collapse occurrences<br>• Advancing stability in training algorithms development<br>• Elevating interpretability in GAN models<br>• Pioneering new application horizons | Future directions for GANs include improving mode collapse, developing more stable training algorithms, increasing interpretability, and exploring new applications. Improving mode collapse involves developing new architectures or algorithms that can produce more diverse and varied outputs. Developing more stable training algorithms involves improving the optimization methods used to train the model. Increasing interpretability involves developing new techniques or methods that can help understand how the model makes predictions. Exploring new applications involves applying GANs to new domains or problems. | • Create a roadmap to show the future directions for GANs, with arrows and text to illustrate the relationships between the different directions<br>• Use a dark background and light-colored text to make the roadmap easy to read<br>• Include navigation instructions to move to the next screen |
+
+**Screen 2.7 Title:** Design and Implement a Simple GAN Model
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Step-by-step guide to designing and implementing a basic GAN model<br>• Illustrating implementation with Python code snippet<br>• Visual representation of the GAN model architecture | To design and implement a simple GAN model, follow the steps: design the generator and discriminator architectures, choose the loss function and optimization method, train the model, and evaluate the performance. Use a Python code snippet to illustrate the implementation, and use a diagram to show the architecture of the GAN model. | • Visualize a diagram to show the architecture of the GAN model, with the layers and activation functions highlighted<br>• Use a simple, colorful layout to make the diagram easy to understand<br>• Include navigation instructions to move to the final screen |
+
+**Screen 2.8 Title:** Final Assessment
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Participate in the assessment to evaluate your GAN comprehension<br>• Utilize a user-friendly multiple-choice format for the assessment<br>• Receive feedback on your GAN knowledge | To complete the final assessment, answer the questions to assess your understanding of GANs. Use a multiple-choice format to make the assessment easy to complete, and provide feedback to the learner on their performance. | • Create a quiz to assess the learner's understanding of GANs, with multiple-choice questions and feedback on the correct answers<br>• Use a simple, colorful layout to make the quiz easy to complete<br>• Include navigation instructions to move to the final screen |
+
+* * *
+
+Module 3: Unsupervised Learning and Generative AI<br>Topic: Unsupervised Learning and Generative AI
+
+Screen 3.1 Title: Introduction to Unsupervised Learning
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Types of unsupervised learning (clustering, dimensionality reduction, etc.)<br>• Unsupervised learning algorithms in Generative AI<br>• Strengths and weaknesses of unsupervised learning in Generative AI | Welcome to this module on Unsupervised Learning and Generative AI. As we discussed in the previous module, Generative Adversarial Networks (GANs) are a type of deep learning algorithm that can generate new, synthetic data. But how do we train these models? That's where unsupervised learning comes in. Unsupervised learning is a type of machine learning where the algorithm learns from the data without any prior labels or supervision. There are several types of unsupervised learning, including clustering and dimensionality reduction. In this module, we'll explore how these techniques are used in Generative AI. | • Visual description: A diagram showing the different types of unsupervised learning, with arrows connecting them to Generative AI. • Layout details: A clean and simple layout with plenty of white space. • Navigation instructions: A navigation menu on the left-hand side, with a "Next" button at the bottom of the screen. |
+
+Screen 3.2 Title: Types of Unsupervised Learning
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Clustering: a technique for grouping similar data points together<br>• Dimensionality reduction: a technique for reducing the number of features in a dataset<br>• Generative models: a type of unsupervised learning algorithm that can generate new data | Let's dive deeper into the different types of unsupervised learning. One of the most common techniques is clustering. Clustering is a technique for grouping similar data points together, based on their characteristics. Another technique is dimensionality reduction, which reduces the number of features in a dataset, making it easier to analyze. We'll also explore generative models, a type of unsupervised learning algorithm that can generate new data. | • Visual description: A diagram showing the different types of unsupervised learning, with arrows connecting them to Generative AI. • Layout details: A clean and simple layout with plenty of white space. • Navigation instructions: A navigation menu on the left-hand side, with a "Next" button at the bottom of the screen. |
+
+Screen 3.3 Title: Unsupervised Learning Algorithms in Generative AI
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Variational autoencoders (VAEs)<br>• Generative adversarial networks (GANs)<br>• Autoencoders: a type of neural network that can learn to compress and reconstruct data | Now that we've discussed the different types of unsupervised learning, let's talk about how they're used in Generative AI. One of the most popular unsupervised learning algorithms is variational autoencoders (VAEs). VAEs are a type of neural network that can learn to compress and reconstruct data. Another popular algorithm is generative adversarial networks (GANs). GANs use two competing neural networks to generate new data. We'll also explore autoencoders, a type of neural network that can learn to compress and reconstruct data. | • Visual description: A diagram showing the different unsupervised learning algorithms, with arrows connecting them to Generative AI. • Layout details: A clean and simple layout with plenty of white space. • Navigation instructions: A navigation menu on the left-hand side, with a "Next" button at the bottom of the screen. |
+
+Screen 3.4 Title: Strengths and Weaknesses of Unsupervised Learning in Generative AI
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Strengths: ability to discover complex patterns, ability to generate new data<br>• Weaknesses: can be computationally expensive, can be difficult to interpret results | Now that we've discussed the different unsupervised learning algorithms used in Generative AI, let's talk about the strengths and weaknesses of unsupervised learning in this context. One of the strengths of unsupervised learning is its ability to discover complex patterns in data. Another strength is its ability to generate new data. However, there are also several weaknesses to consider. One of the main weaknesses is that unsupervised learning can be computationally expensive. Another weakness is that it can be difficult to interpret the results. | • Visual description: A diagram showing the strengths and weaknesses of unsupervised learning, with arrows connecting them to Generative AI. • Layout details: A clean and simple layout with plenty of white space. • Navigation instructions: A navigation menu on the left-hand side, with a "Next" button at the bottom of the screen. |
+
+Screen 3.5 Title: Implementing Unsupervised Learning Algorithms
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Step 1: choose a dataset<br>• Step 2: choose an unsupervised learning algorithm<br>• Step 3: train the model and evaluate its performance | In this final screen, let's talk about how to implement unsupervised learning algorithms in practice. To do this, we need to follow several steps. Step 1 is to choose a dataset. Step 2 is to choose an unsupervised learning algorithm. Step 3 is to train the model and evaluate its performance. | • Visual description: A step-by-step guide to implementing unsupervised learning algorithms, with arrows connecting each step to the next. • Layout details: A clean and simple layout with plenty of white space. • Navigation instructions: A navigation menu on the left-hand side, with a "Complete" button at the bottom of the screen. |
+
+* * *
+
+Module 4: Generative AI Market Potential and Industry Use Cases<br>Topic: Generative AI Market Potential
+
+**Screen 4.1 Title:** Overview of Generative AI Market
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Generative AI is a rapidly growing market<br>• Estimated market size: $1.3 billion by 2025<br>• Key players: Google, Microsoft, NVIDIA | The market for Generative AI is expected to reach $1.3 billion by 2025, driven by increasing demand for AI-powered solutions in various industries. Key players in this market include Google, Microsoft, and NVIDIA. These companies are investing heavily in research and development, driving innovation and growth in the field. As a result, the market is expected to experience significant growth in the coming years. According to a recent report, the market is expected to grow at a CAGR of 40% from 2020 to 2025. This growth is driven by the increasing adoption of Generative AI in various industries, including healthcare, finance, and retail. | • Visual description: A graph showing the growth of Generative AI market from 2020 to 2025<br>• Layout details: A simple, clean layout with a prominent graph and brief text<br>• Navigation instructions: Click on the graph to see the details |
+
+**Screen 4.2 Title:** Key Players and Strategies
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Google: leading provider of Generative AI solutions<br>• Microsoft: investing heavily in research and development of Generative AI<br>• NVIDIA: providing hardware and software solutions for Generative AI | Google is a leading provider of Generative AI solutions, with a strong focus on research and development. Microsoft is also investing heavily in Generative AI, with a focus on creating AI-powered solutions for various industries. NVIDIA is providing hardware and software solutions for Generative AI, enabling developers to create high-performance AI models. These companies are driving innovation and growth in the field, and their strategies are shaping the future of Generative AI. As a result, the market is expected to experience significant growth in the coming years. | • Visual description: A table showing the strategies of key players<br>• Layout details: A clean layout with a prominent table and brief text<br>• Navigation instructions: Click on the table to see the details |
+
+**Screen 4.3 Title:** Challenges and Opportunities
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • High processing power requirements<br>• Data quality and availability<br>• Regulatory challenges | The adoption of Generative AI is also facing several challenges, including high processing power requirements, data quality and availability, and regulatory challenges. These challenges are significant, but they also present opportunities for innovation and growth. As the market continues to evolve, we can expect to see new solutions emerge to address these challenges. For example, advances in hardware and software are making it possible to process large amounts of data more efficiently. Similarly, new data sources are becoming available, and regulatory frameworks are being developed to support the use of Generative AI. | • Visual description: A diagram showing the challenges and opportunities in Generative AI<br>• Layout details: A complex layout with a prominent diagram and brief text<br>• Navigation instructions: Click on the diagram to see the details |
+
+**Screen 4.4 Title:** Industry Use Cases
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Healthcare: medical imaging and personalized medicine<br>• Finance: risk management and credit scoring<br>• Retail: product recommendation and personalized marketing | Generative AI is being used in various industries, including healthcare, finance, and retail. In healthcare, Generative AI is being used for medical imaging and personalized medicine. In finance, it is being used for risk management and credit scoring. In retail, it is being used for product recommendation and personalized marketing. These use cases demonstrate the potential of Generative AI to drive innovation and growth in various industries. | • Visual description: A graph showing the industry use cases of Generative AI<br>• Layout details: A simple, clean layout with a prominent graph and brief text<br>• Navigation instructions: Click on the graph to see the details |
+
+**Screen 4.5 Title:** Future of Generative AI
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Continued innovation and growth<br>• Increased adoption in various industries<br>• New applications and use cases | The future of Generative AI looks bright, with continued innovation and growth expected in the coming years. As the market continues to evolve, we can expect to see increased adoption in various industries, including healthcare, finance, and retail. New applications and use cases are also emerging, such as in art and design. These developments will drive innovation and growth in the field, and will shape the future of Generative AI. | • Visual description: A diagram showing the future of Generative AI<br>• Layout details: A complex layout with a prominent diagram and brief text<br>• Navigation instructions: Click on the diagram to see the details |
+
+* * *
+
+Module 5: Implementing Generative AI in Apps<br>Topic: Design and Implement a Generative AI Model in a Real-World App
+
+Screen 5.1 Title: Introduction to Implementing Generative AI in Apps
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Understand the importance of integrating Generative AI into apps.<br>• Recognize the benefits of using Generative AI in real-world applications.<br>• Identify common challenges and limitations of implementing Generative AI in apps.<br>• Learn how to design and implement a simple Generative AI model in a real-world app. | The goal of this module is to help learners design and implement a simple Generative AI model in a real-world app. Integrating Generative AI into apps can enhance user experiences, improve business outcomes, and stay competitive in the market. However, implementing Generative AI in apps can be challenging due to the complexity of the technology and the need for specialized expertise. In this module, learners will learn how to overcome these challenges and design a simple Generative AI model in a real-world app. | • A clean and simple layout with a title slide that includes the module title and a brief description.<br>• A background image with a subtle Generative AI-related design element, such as a neural network diagram or a futuristic cityscape.<br>• Navigation buttons to proceed to the next screen or go back to the previous screen. |
+
+Screen 5.2 Title: Designing a Generative AI Model in a Real-World App
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Identify key considerations for designing a Generative AI model in a real-world app.<br>• Learn how to break down complex problems into manageable components.<br>• Understand the importance of selecting the right data and algorithms for the Generative AI model.<br>• Analyze the role of unsupervised learning in Generative AI. | When designing a Generative AI model in a real-world app, it's essential to consider several key factors, including the problem to be solved, the data to be used, and the algorithms to be employed. By breaking down complex problems into manageable components, learners can create a clear and concise design plan. This plan should include the selection of the right data and algorithms for the Generative AI model, as well as the consideration of unsupervised learning techniques. | • A split-screen layout with a design plan template on one side and a real-world example on the other.<br>• A table or diagram showing the key considerations for designing a Generative AI model in a real-world app.<br>• A button to access a downloadable design plan template. |
+
+Screen 5.3 Title: Breaking Down Complex Problems into Manageable Components
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Learn how to decompose complex problems into smaller, more manageable tasks.<br>• Understand the importance of identifying key stakeholders and their needs.<br>• Recognize the role of prototyping in the design process.<br>• Analyze the benefits of using a collaborative approach to design. | Breaking down complex problems into smaller, more manageable tasks is a crucial step in designing a successful Generative AI model in a real-world app. This involves identifying key stakeholders and their needs, as well as recognizing the importance of prototyping in the design process. By using a collaborative approach to design, learners can ensure that their Generative AI model meets the needs of all stakeholders. | • A mind map or diagram showing the decomposition of a complex problem into smaller tasks.<br>• A video or animation demonstrating the importance of prototyping in the design process.<br>• A screenshot or image of a collaborative design tool. |
+
+Screen 5.4 Title: Selecting the Right Data and Algorithms for the Generative AI Model
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Learn how to select the right data for the Generative AI model.<br>• Understand the importance of data preprocessing and cleaning.<br>• Recognize the role of feature engineering in improving model performance.<br>• Analyze the benefits of using a combination of machine learning algorithms. | Selecting the right data for the Generative AI model is a critical step in designing a successful model. This involves learning how to preprocess and clean the data, as well as recognizing the importance of feature engineering in improving model performance. By using a combination of machine learning algorithms, learners can create a more robust and accurate Generative AI model. | • A table or diagram showing the steps involved in selecting the right data for the Generative AI model.<br>• A screenshot or image of a data preprocessing tool.<br>• A video or animation demonstrating the importance of feature engineering in improving model performance. |
+
+Screen 5.5 Title: Implementing the Generative AI Model in a Real-World App
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Learn how to implement the Generative AI model in a real-world app.<br>• Understand the importance of testing and iterating the model.<br>• Recognize the role of monitoring and evaluating the model's performance.<br>• Analyze the benefits of using a continuous integration and delivery approach. | Implementing the Generative AI model in a real-world app is a critical step in bringing the model to life. This involves learning how to test and iterate the model, as well as recognizing the importance of monitoring and evaluating the model's performance. By using a continuous integration and delivery approach, learners can ensure that their Generative AI model is always up-to-date and performing at its best. | • A video or animation demonstrating the implementation of the Generative AI model in a real-world app.<br>• A screenshot or image of a continuous integration and delivery tool.<br>• A diagram or flowchart showing the steps involved in testing and iterating the model. |
+
+Screen 5.6 Title: Conclusion and Final Thoughts
+
+| On-Screen Text (OST) | Audio Narration | Visual Instructions & Developer Notes |
+| :-- | :-- | :-- |
+| • Summarize the key takeaways from the module.<br>• Reflect on the importance of integrating Generative AI into real-world apps.<br>• Recognize the benefits and challenges of implementing Generative AI in apps.<br>• Provide final thoughts and recommendations for future learning. | In conclusion, learners have completed the module on implementing Generative AI in apps. This module has provided a comprehensive overview of the key considerations and steps involved in designing and implementing a Generative AI model in a real-world app. The importance of integrating Generative AI into real-world apps cannot be overstated, as it can enhance user experiences, improve business outcomes, and stay competitive in the market. However, implementing Generative AI in apps can be challenging due to the complexity of the technology and the need for specialized expertise. | • A summary slide or table showing the key takeaways from the module.<br>• A final thoughts or recommendations slide or text box.<br>• A call-to-action or next steps slide or button. |

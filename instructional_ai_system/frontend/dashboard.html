@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | AI Instructional Design</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .project-card {
+            border-left: 4px solid var(--primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .project-card h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .project-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container animate-fade-in">
+        <div class="header">
+            <h2>📚 Dashboard</h2>
+            <div>
+                <a href="intake.html" class="btn btn-primary">+ New Project</a>
+                <button class="btn btn-outline" style="margin-left:1rem" onclick="api.logout()">Logout</button>
+            </div>
+        </div>
+
+        <div id="loading" class="text-center mt-2 text-muted">Loading projects...</div>
+
+        <div id="projects-grid" class="grid hidden">
+            <!-- Projects injected here -->
+        </div>
+
+        <div id="empty-state" class="hidden text-center mt-2 card" style="max-width: 500px; margin: 2rem auto;">
+            <p>You haven't created any projects yet.</p>
+            <a href="intake.html" class="btn btn-primary mt-1">Start First Project</a>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const grid = document.getElementById('projects-grid');
+            const loading = document.getElementById('loading');
+            const emptyState = document.getElementById('empty-state');
+
+            try {
+                const projects = await api.request('/history/');
+                loading.classList.add('hidden');
+
+                if (projects.length === 0) {
+                    emptyState.classList.remove('hidden');
+                } else {
+                    grid.classList.remove('hidden');
+                    projects.forEach(p => {
+                        const date = new Date(p.updated_at || p.created_at).toLocaleString();
+                        const card = document.createElement('div');
+                        card.className = 'card project-card animate-fade-in';
+                        card.innerHTML = `
+                            <div>
+                                <h3>${escapeHtml(p.title)}</h3>
+                                <p class="project-meta">Business Unit: ${escapeHtml(p.business_unit || 'N/A')}<br>Last Active: ${date}</p>
+                            </div>
+                            <div class="flex" style="margin-top:1rem;">
+                                <button class="btn btn-outline" style="flex:1" onclick="openProject('${p.id}')">Open</button>
+                                <button class="btn btn-secondary" style="background:#dc3545; color:white; padding:0.5rem;" onclick="deleteProject('${p.id}')">🗑️</button>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+                    });
+                }
+            } catch (err) {
+                loading.innerText = 'Error loading projects. Try refreshing.';
+            }
+        });
+
+        function escapeHtml(unsafe) {
+            return (unsafe || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function openProject(id) {
+            localStorage.setItem('current_project_id', id);
+            window.location.href = 'editor.html'; // Or general view page
+        }
+
+        async function deleteProject(id) {
+            if (confirm("Are you sure you want to delete this project?")) {
+                try {
+                    await api.request(`/history/${id}`, { method: 'DELETE' });
+                    location.reload();
+                } catch (err) {
+                    alert('Error deleting project');
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

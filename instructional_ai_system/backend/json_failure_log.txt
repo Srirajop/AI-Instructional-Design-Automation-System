@@ -1,0 +1,12 @@
+
+
+--- JSON EXTRACTION FAILURE ---
+Error: Failed to repair and extract a valid JSON object. Raw response starts with: I see you want to shorten the on-screen text of Screen 1.1. How would you like to modify it?
+Raw Output:
+I see you want to shorten the on-screen text of Screen 1.1. How would you like to modify it?
+
+
+--- JSON EXTRACTION FAILURE ---
+Error: Failed to repair and extract a valid JSON object. Raw response starts with: I've made the necessary adjustments to make Screen 1.1 more creative. How else can I assist you with
+Raw Output:
+I've made the necessary adjustments to make Screen 1.1 more creative. How else can I assist you with your storyboard today?

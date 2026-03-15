@@ -1,0 +1,108 @@
+
+--- NEW EDIT REQUEST ---
+User Prompt: Yo
+Running fast intent model...
+DEBUG INTENT DATA: {'intent': 'CHAT', 'chat_reply': "Sounds like a friendly hello! Are you working on an instructional design document? I'd be happy to help with any questions or tasks you need assistance with."}
+Intent is CHAT. Returning early.
+
+--- NEW EDIT REQUEST ---
+User Prompt: change screen 1.2's ost please
+Running fast intent model...
+DEBUG INTENT DATA: {'intent': 'EDIT', 'chat_reply': ''}
+Sending request to heavy model API...
+Heavy model API status: success
+Heavy model Raw Output: {
+  "assistant_reply": "I'm here to assist you with changing the on-screen text (OST) for Screen 1.2...
+DEBUG HEAVY MODEL PARSED KEYS: ['assistant_reply', 'edits', 'is_edit']
+DEBUG HEAVY MODEL is_edit: True
+DEBUG HEAVY MODEL assistant_reply: I'm here to assist you with changing the on-screen text (OST) for Screen 1.2 related to the history of Generative AI.
+Applied edit successfully.
+
+--- NEW EDIT REQUEST ---
+User Prompt: change its visual instructions too
+Running fast intent model...
+DEBUG INTENT DATA: {'intent': 'EDIT', 'chat_reply': ''}
+Sending request to heavy model API...
+Heavy model API status: success
+Heavy model Raw Output: {
+  "assistant_reply": "I'm here to assist you with changing the visual instructions for Screen 1.3 ...
+DEBUG HEAVY MODEL PARSED KEYS: ['assistant_reply', 'edits', 'is_edit']
+DEBUG HEAVY MODEL is_edit: True
+DEBUG HEAVY MODEL assistant_reply: I'm here to assist you with changing the visual instructions for Screen 1.3 related to Generative AI vs. Other AI Types.
+Applied edit successfully.
+Computed History Context: 
+CONVERSATION HISTORY:
+User: Hi
+Assistant: Hi! Nice to chat with you. Is there anything I can help you with regarding your instructional design document?
+User: change screen 1.2's ost please
+Assistant: I am here to assist you. How can I help you today?
+User: Yo
+Assistant: Sounds like a friendly hello! Are you working on an instructional design document? I'd be happy to help with any questions or tasks you need assistance with.
+User: change screen 1.2's ost please
+Assistant: I'm here to assist you with changing the on-screen text (OST) for Screen 1.2 related to the history of Generative AI.
+User: change its visual instructions too
+Assistant: I'm here to assist you with changing the visual instructions for Screen 1.3 related to Generative AI vs. Other AI Types.
+
+
+
+--- NEW EDIT REQUEST ---
+User Prompt: Hi
+Running fast intent model...
+DEBUG INTENT DATA: {'intent': 'CHAT', 'chat_reply': 'Hi! How can I help you today?'}
+Intent is CHAT. Returning early.
+Computed History Context: 
+CONVERSATION HISTORY:
+User: change screen 1.2's ost please
+Assistant: I am here to assist you. How can I help you today?
+User: Yo
+Assistant: Sounds like a friendly hello! Are you working on an instructional design document? I'd be happy to help with any questions or tasks you need assistance with.
+User: change screen 1.2's ost please
+Assistant: I'm here to assist you with changing the on-screen text (OST) for Screen 1.2 related to the history of Generative AI.
+User: change its visual instructions too
+Assistant: I'm here to assist you with changing the visual instructions for Screen 1.3 related to Generative AI vs. Other AI Types.
+User: Hi
+Assistant: Hi! How can I help you today?
+
+
+
+--- NEW EDIT REQUEST ---
+User Prompt: change ost of screen 1.1 to more content
+Running fast intent model...
+DEBUG INTENT DATA: {'intent': 'EDIT', 'chat_reply': ''}
+Sending request to heavy model API...
+Heavy model API status: success
+Heavy model Raw Output: {
+  "assistant_reply": "I see you want to change the On-Screen Text (OST) of Screen 1.1 to include m...
+DEBUG HEAVY MODEL PARSED KEYS: ['assistant_reply', 'edits', 'is_edit']
+DEBUG HEAVY MODEL is_edit: True
+DEBUG HEAVY MODEL assistant_reply: I see you want to change the On-Screen Text (OST) of Screen 1.1 to include more content. Let's enhance the information provided on What is Generative AI.
+DEBUG HEAVY MODEL edits: [{"search_string": "\u2022 Definition of Generative AI<br>\u2022 History of Generative AI<br>\u2022 Brief overview of Generative AI applications", "replace_string": "\u2022 Definition of Generative AI: An introduction to Generative AI as a subset of artificial intelligence focused on creating data that imitates real-world information. It utilizes advanced algorithms to generate synthetic data with high resemblance to real data. Learn the core principles and applications of Generative AI in different fields. \u2022 Historical Evolution: Delve into the foundation of Generative AI, tracing back to its inception in the 1990s where pioneering researchers first explored generative models. Explore key milestones and contributors in the advancement of Generative AI, leading up to its modern-day applications. \u2022 Applications of Generative AI: Gain insights into the diverse use cases of Generative AI across domains like image and video processing, natural language understanding, and music generation. Understand the potential of Generative AI for innovation and exploration in various industries."}]
+Applied edit successfully.
+Computed History Context: 
+CONVERSATION HISTORY:
+User: Yo
+Assistant: Sounds like a friendly hello! Are you working on an instructional design document? I'd be happy to help with any questions or tasks you need assistance with.
+User: change screen 1.2's ost please
+Assistant: I'm here to assist you with changing the on-screen text (OST) for Screen 1.2 related to the history of Generative AI.
+User: change its visual instructions too
+Assistant: I'm here to assist you with changing the visual instructions for Screen 1.3 related to Generative AI vs. Other AI Types.
+User: Hi
+Assistant: Hi! How can I help you today?
+User: change ost of screen 1.1 to more content
+Assistant: I see you want to change the On-Screen Text (OST) of Screen 1.1 to include more content. Let's enhance the information provided on What is Generative AI.
+
+
+
+--- NEW EDIT REQUEST ---
+User Prompt: ok now change its visual instructions too
+Running fast intent model...
+DEBUG INTENT DATA: {'intent': 'EDIT', 'chat_reply': ''}
+Sending request to heavy model API...
+Heavy model API status: success
+Heavy model Raw Output: {
+  "assistant_reply": "I'm here to assist you with changing the visual instructions for Screen 1.3 ...
+DEBUG HEAVY MODEL PARSED KEYS: ['assistant_reply', 'edits', 'is_edit']
+DEBUG HEAVY MODEL is_edit: True
+DEBUG HEAVY MODEL assistant_reply: I'm here to assist you with changing the visual instructions for Screen 1.3 related to Generative AI vs. Other AI Types.
+DEBUG HEAVY MODEL edits: [{"search_string": "Visual description: A diagram comparing Generative AI with other AI types appears on the screen, with key differences and similarities highlighted in a bold, blue color. The diagram is interactive, allowing learners to click on each AI type to learn more about it. The layout is clean and minimalistic, with a white background and a subtle gradient effect. The navigation instructions are to click on the \"Next\" button to proceed to the next screen.", "replace_string": "Visual instructions: A diagram comparing Generative AI with other AI types is displayed on the screen. Key differences and similarities are highlighted in bold blue color. The diagram is interactive, allowing learners to click on each AI type for more information. The design is clean and minimalistic, featuring a white background with a subtle gradient effect. Navigation instructions prompt users to click the \"Next\" button for progression."}]
+Applied edit successfully.

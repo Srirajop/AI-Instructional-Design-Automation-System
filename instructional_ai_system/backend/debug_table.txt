@@ -1,0 +1,23 @@
+'# PROJECT INFORMATION\n\n*   **Title:** Cyber Security For Employees — Self-paced eLearning\n*   **Trainers:**\n*   **Instructor / AI Assistant:**\n*   **Target Audience:**\n*   **Goals:**\n\n# COURSE OVERVIEW\n\nThis self-paced eLearning course is designed to educate employees on the fundamentals of cyber security and malware prevention. The course consists of five modules, each focusing on a specific aspect of malware prevention and mitigation.\n\n# MODULE BREAKDOWN\n\n| Module | Delivery Mode | Learning Objectives | Topics | Recommended Strategy | Activities/Assessment | Duration |\n| --- | --- | --- | --- | --- | --- | --- |\n| Module 1: Malware Fundamentals | Self-paced eLearning | • Define basic malware concepts.  \n• Identify common types of malware (viruses, worms, spyware, trojans).  \n• Explain the differences between malware and other types of cyber threats.  \n• Recognize the risks associated with malware attacks. | • Definition of Malware  \n\xa0\xa0- Types of malware (viruses, worms, spyware, troj'
+----------------------------------------
+# PROJECT INFORMATION
+
+*   **Title:** Cyber Security For Employees — Self-paced eLearning
+*   **Trainers:**
+*   **Instructor / AI Assistant:**
+*   **Target Audience:**
+*   **Goals:**
+
+# COURSE OVERVIEW
+
+This self-paced eLearning course is designed to educate employees on the fundamentals of cyber security and malware prevention. The course consists of five modules, each focusing on a specific aspect of malware prevention and mitigation.
+
+# MODULE BREAKDOWN
+
+| Module | Delivery Mode | Learning Objectives | Topics | Recommended Strategy | Activities/Assessment | Duration |
+| --- | --- | --- | --- | --- | --- | --- |
+| Module 1: Malware Fundamentals | Self-paced eLearning | • Define basic malware concepts.  
+• Identify common types of malware (viruses, worms, spyware, trojans).  
+• Explain the differences between malware and other types of cyber threats.  
+• Recognize the risks associated with malware attacks. | • Definition of Malware  
+  - Types of malware (viruses, worms, spyware, troj

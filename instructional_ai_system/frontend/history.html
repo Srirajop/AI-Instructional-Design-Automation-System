@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Details | AI Instructional Design</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="container animate-fade-in">
+        <a href="dashboard.html" class="btn btn-outline" style="margin-bottom: 1rem">&larr; Back to Dashboard</a>
+
+        <h2 id="project-title">Loading Project...</h2>
+        <p class="text-muted" id="project-meta"></p>
+
+        <div class="grid mt-2">
+            <!-- Intake Card -->
+            <div class="card">
+                <h3>📋 Project Intake</h3>
+                <div id="intake-data" style="font-size: 0.9em;"></div>
+            </div>
+
+            <!-- extracted content -->
+            <div class="card">
+                <h3>📄 Extracted Knowledge Base</h3>
+                <div style="max-height: 200px; overflow-y:auto; font-size: 0.8em; background: var(--bg-color); padding: 1rem; border-radius: 4px; border: 1px solid var(--border);"
+                    id="extracted-content">
+                    No content extracted.
+                </div>
+            </div>
+        </div>
+
+        <div class="grid mt-2">
+            <!-- Design Doc -->
+            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+                <div>
+                    <h3>📄 Design Document</h3>
+                    <p class="text-muted">The instructional design blueprint for this project.</p>
+                </div>
+                <div class="mt-1">
+                    <button class="btn btn-outline mb-1" style="width:100%" id="dl-design">Download Excel
+                        Version</button>
+                    <a href="editor.html" class="btn btn-primary" style="width:100%">Open in Studio</a>
+                </div>
+            </div>
+
+            <!-- Storyboard -->
+            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+                <div>
+                    <h3>🎬 Storyboard</h3>
+                    <p class="text-muted">The detailed screen-by-screen development guide.</p>
+                </div>
+                <div class="mt-1">
+                    <button class="btn btn-outline mb-1" style="width:100%" id="dl-storyboard">Download Word
+                        Version</button>
+                    <a href="storyboard.html" class="btn btn-primary" style="width:100%">Open in Studio</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        const projectId = localStorage.getItem('current_project_id');
+        if (!projectId) window.location.href = 'dashboard.html';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const project = await api.request(`/history/${projectId}`);
+                document.getElementById('project-title').innerText = project.title;
+                document.getElementById('project-meta').innerText = `Created: ${new Date(project.created_at).toLocaleString()} | Business Unit: ${project.business_unit}`;
+
+                if (project.intake_data) {
+                    const intake = JSON.parse(project.intake_data);
+                    let intakeHtml = '<ul>';
+                    for (const [k, v] of Object.entries(intake)) {
+                        intakeHtml += `<li><strong>${k}:</strong> ${v}</li>`;
+                    }
+                    intakeHtml += '</ul>';
+                    document.getElementById('intake-data').innerHTML = intakeHtml;
+                }
+
+                if (project.extracted_content) {
+                    const extractEl = document.getElementById('extracted-content');
+                    extractEl.innerText = project.extracted_content;
+                }
+            } catch (e) {
+                alert("Failed to load project: " + e.message);
+            }
+        });
+
+        document.getElementById('dl-design').addEventListener('click', async () => {
+            await api.request(`/export/${projectId}/design-doc`, { method: 'GET' });
+        });
+
+        document.getElementById('dl-storyboard').addEventListener('click', async () => {
+            await api.request(`/export/${projectId}/storyboard`, { method: 'GET' });
+        });
+    </script>
+</body>
+
+</html>

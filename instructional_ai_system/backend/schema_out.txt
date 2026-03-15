@@ -1,0 +1,16 @@
+Tables: ['projects', 'users']
+
+Projects columns:
+  id: INTEGER
+  course_title: VARCHAR(255)
+  business_unit: VARCHAR(255)
+  design_doc: TEXT
+  storyboard: TEXT
+  created_at: DATETIME
+
+Users columns:
+  id: INTEGER
+  name: VARCHAR(100)
+  email: VARCHAR(100)
+  hashed_password: VARCHAR(255)
+  created_at: DATETIME

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intake Form | AI Instructional Design</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="container animate-fade-in">
+        <a href="dashboard.html" class="btn btn-outline" style="margin-bottom: 1rem">&larr; Back to Dashboard</a>
+
+        <h2>📝 Project Intake & Content Extraction</h2>
+
+        <!-- Step 1: Init Project -->
+        <div id="step-1" class="card">
+            <h3>Step 1: Course Information</h3>
+            <form id="intake-form">
+                <div class="grid">
+                    <div class="form-group">
+                        <label>Course Title</label>
+                        <input type="text" id="course_title" class="form-control" required
+                            placeholder="e.g. Cybersecurity 101">
+                    </div>
+                    <div class="form-group">
+                        <label>Business Unit</label>
+                        <input type="text" id="business_unit" class="form-control"
+                            placeholder="e.g. HR, IT, Compliance">
+                    </div>
+                    <div class="form-group">
+                        <label>Course Type</label>
+                        <input type="text" id="course_type" class="form-control"
+                            placeholder="e.g. Compliance, Onboarding">
+                    </div>
+                    <div class="form-group">
+                        <label>Target Audience</label>
+                        <input type="text" id="target_audience" class="form-control" placeholder="e.g. All Employees">
+                    </div>
+                </div>
+
+                <div class="form-group mt-1">
+                    <label>Learning Objectives (List 3 main objectives)</label>
+                    <input type="text" id="objective_1" class="form-control" placeholder="Objective 1" required
+                        style="margin-bottom:0.5rem">
+                    <input type="text" id="objective_2" class="form-control" placeholder="Objective 2" required
+                        style="margin-bottom:0.5rem">
+                    <input type="text" id="objective_3" class="form-control" placeholder="Objective 3" required>
+                </div>
+
+                <div class="grid mt-1">
+                    <div class="form-group">
+                        <label>Interactivity Level <span id="il_label"
+                                style="color:var(--primary); font-weight:700;">Level 3 (Applied, Scenarios,
+                                Branching)</span></label>
+                        <input type="range" id="il_slider" min="1" max="4" value="3" step="1"
+                            oninput="updateIL(this.value)">
+                        <input type="hidden" id="interactivity_level" value="Level 3 (Applied, Scenarios, Branching)">
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Number of Modules <span id="nm_label"
+                                style="color:var(--primary); font-weight:700;">3</span></label>
+                        <input type="range" id="num_modules" min="1" max="10" value="3" step="1"
+                            oninput="document.getElementById('nm_label').innerText = this.value">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-1" id="save-intake-btn">Save Project Details
+                    &rarr;</button>
+                <div id="intake-status" class="mt-1" style="color:var(--success); font-weight:500;"></div>
+            </form>
+        </div>
+
+        <!-- Step 2: Upload Content (Hidden initially) -->
+        <div id="step-2" class="card mt-2 hidden">
+            <h3>Step 2: Provide Source Content</h3>
+            <p class="text-muted">Upload documents (PDF, DOCX, XLSX, PPTX, TXT) or provide URLs (Webpages, YouTube
+                videos)</p>
+
+            <div class="grid mt-1">
+                <div
+                    style="border:1px dashed var(--primary); padding:1.5rem; border-radius:var(--radius); text-align:center;">
+                    <h4>Upload File</h4>
+                    <input type="file" id="file-upload" class="form-control mt-1" accept=".pdf,.docx,.xlsx,.txt,.pptx">
+                    <button class="btn btn-secondary mt-1" id="upload-file-btn">Upload & Extract</button>
+                </div>
+
+                <div
+                    style="border:1px dashed var(--primary); padding:1.5rem; border-radius:var(--radius); text-align:center;">
+                    <h4>Add Website / YouTube URL</h4>
+                    <input type="url" id="url-upload" class="form-control mt-1" placeholder="https://youtube.com/...">
+                    <button class="btn btn-secondary mt-1" id="upload-url-btn">Extract URL</button>
+                </div>
+            </div>
+
+            <div id="extraction-status" class="mt-1" style="color:var(--success); font-weight:500; text-align:center;">
+            </div>
+
+            <div class="text-center mt-2">
+                <button class="btn btn-primary" id="continue-btn" style="font-size:1.2rem; padding:1rem 2rem;">Finish
+                    Setup & Start Editor &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/intake.js"></script>
+    <script>
+        const ilTexts = [
+            "Level 1 (Awareness, Basic text/images)",
+            "Level 2 (Engaging, Videos, Basic scenarios)",
+            "Level 3 (Applied, Scenarios, Branching)",
+            "Level 4 (Advanced, Games, VR/AR)"
+        ];
+        function updateIL(val) {
+            document.getElementById('il_label').innerText = ilTexts[val - 1];
+            document.getElementById('interactivity_level').value = ilTexts[val - 1];
+        }
+    </script>
+</body>
+
+</html>

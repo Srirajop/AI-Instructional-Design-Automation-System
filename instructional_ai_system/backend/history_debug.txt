@@ -1,0 +1,20 @@
+ID: 317 | Role: user | Content: please change ost of screen 1.4 to more descriptive
+---
+ID: 318 | Role: assistant | Content: I will update the On-Screen Text for Screen 1.4 to be more descriptive as requested.
+---
+ID: 319 | Role: user | Content: change its visual instructions too
+---
+ID: 320 | Role: assistant | Content: I will update the Visual Instructions for Screen 1.4 to be more descriptive as requested.
+---
+ID: 321 | Role: user | Content: Hi
+---
+ID: 322 | Role: assistant | Content: Hi there! How can I assist you with the Instructional Design Document today? Do you want to review the 'Audio Narration' section or make any updates?
+---
+ID: 323 | Role: user | Content: please change screen 2.2 ost
+---
+ID: 324 | Role: assistant | Content: I will update the on-screen text for Screen 2.2 as requested.
+---
+ID: 325 | Role: user | Content: please change its visual instructions
+---
+ID: 326 | Role: assistant | Content: I will update the Visual Instructions for Screen 1.4 to be more descriptive as requested.
+---
