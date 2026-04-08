@@ -12,3 +12,8 @@ fastapi-mail
 python-docx
 openpyxl
 requests
+PyPDF2
+youtube-transcript-api
+beautifulsoup4
+python-pptx
+tenacity
