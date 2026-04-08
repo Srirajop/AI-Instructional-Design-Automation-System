@@ -8,3 +8,7 @@ python-jose[cryptography]
 python-multipart
 groq
 email-validator
+fastapi-mail
+python-docx
+openpyxl
+requests
