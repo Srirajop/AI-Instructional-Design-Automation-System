@@ -481,14 +481,11 @@ def beautify_uploaded_content(api_key: str, content: str, target_type: str, stor
         
         design_doc_rules = """
 2. TARGET DOCUMENT: Design Document (High-Level Course Map)
-   - METADATA RULE: Extract titles, trainers, audience, and overall course descriptions. Place these as standard Markdown headers (###) ABOVE the table.
-   - TABLE RULE: You MUST output exactly ONE (1) Markdown table for all modules.
-   - ROW RULE: Each Module/Topic MUST be exactly ONE (1) PHYSICAL ROW in the table.
-   - HEADERS: Module | Delivery Mode | Learning Objectives | Topics | Recommended Strategy | Activities/Assessment | Duration
-   - YOU MUST output the standard Markdown separator line exactly like this after the headers: `|---|---|---|---|---|---|---|`
-   - AGGREGATION: If a module has multiple objectives or bullet points, COMBINE them into the single cell using `<br>`. 
-   - DO NOT create a new row for every line of text. Group everything relating to a module into its row.
-   - Every row MUST have exactly 6 pipes (|) to create 7 cells (even if empty)."""
+   - METADATA RULE: Headers like "TRAINING PROGRAM FOR IT", "Trainers", or "Instructor" MUST be standard text headers (###) outside the table.
+   - CRITICAL: NEVER put "Program Titles" or "Trainers" as headers of a Markdown table.
+   - TABLE START: The table MUST start with exactly these headers: | Module | Delivery Mode | Learning Objectives | Topics | Recommended Strategy | Activities/Assessment | Duration
+   - AGGREGATION: You MUST group all content for one module (e.g., Module 1) into exactly ONE row. Use <br> for bullet points.
+   - DO NOT create multiple rows for the same module. If you see objectives scattered across lines, MERGE THEM into the 'Learning Objectives' cell."""
 
         # Type 1 Storyboard Rules (3 Columns)
         type1_storyboard_rules = """
@@ -562,15 +559,15 @@ RAW EXTRACTED CONTENT:
 
 Generate the professional {doc_name} Markdown now:"""
 
-        # Using a higher-tier model for complex beautification tasks to ensure 100% literal mapping
-        print("Using Llama-3.1-70b/8b for Beautify...")
+        # Using the most powerful 70B model for multi-instruction adherence
+        print("Using Llama-3.3-70b-versatile for High-Precision Beautify...")
         chat_completion = client.chat.completions.create(
             messages=[
-                {"role": "system", "content": "You are an expert Instructional Designer. You strictly follow formatting rules and 100% literal mapping of content. No summaries."},
+                {"role": "system", "content": "You are a master Instructional Designer. You follow structural and formatting constraints perfectly. You never put non-table data inside a table."},
                 {"role": "user", "content": prompt}
             ],
-            model="llama-3.1-8b-instant", # Keeping 8b for speed/SSE, but increasing capacity
-            temperature=0.3, # Slightly higher for better semantic grouping/re-formatting
+            model="llama-3.3-70b-versatile",
+            temperature=0.1, 
             max_tokens=8000,
         )
         result = chat_completion.choices[0].message.content
