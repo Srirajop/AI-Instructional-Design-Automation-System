@@ -480,18 +480,15 @@ def beautify_uploaded_content(api_key: str, content: str, target_type: str, stor
         doc_name = "Design Document" if target_type == "design_doc" else "Storyboard"
         
         design_doc_rules = """
-2. TARGET DOCUMENT: Design Document
-   - Example input row: "Module 1 | Mode B | Obj C | Topic D | Strategy E | Activity F | 1 hour"
-   - You MUST output a Markdown table with EXACTLY 7 COLUMNS.
+2. TARGET DOCUMENT: Design Document (High-Level Course Map)
+   - METADATA RULE: Extract titles, trainers, audience, and overall course descriptions. Place these as standard Markdown headers (###) ABOVE the table.
+   - TABLE RULE: You MUST output exactly ONE (1) Markdown table for all modules.
+   - ROW RULE: Each Module/Topic MUST be exactly ONE (1) PHYSICAL ROW in the table.
    - HEADERS: Module | Delivery Mode | Learning Objectives | Topics | Recommended Strategy | Activities/Assessment | Duration
    - YOU MUST output the standard Markdown separator line exactly like this after the headers: `|---|---|---|---|---|---|---|`
-   - If the input row has multiple columns, map them faithfully to these 7 headers.
-   - EVEN IF A COLUMN IS EMPTY IN THE INPUT, YOU MUST INCLUDE THE EMPTY CELL IN THE MARDKOWN TABLE (e.g., `| Content | | | | | | |`).
-   - Every module row MUST have exactly 6 pipes (|) to create 7 cells.
-   - Use <br> for line breaks inside cells.
-   - **GOLD STANDARD MAPPING**:
-     Raw: `Mod A | Mode B | Obj C | Topic D`
-     Markdown: `| Mod A | Mode B | Obj C | Topic D | | | |`"""
+   - AGGREGATION: If a module has multiple objectives or bullet points, COMBINE them into the single cell using `<br>`. 
+   - DO NOT create a new row for every line of text. Group everything relating to a module into its row.
+   - Every row MUST have exactly 6 pipes (|) to create 7 cells (even if empty)."""
 
         # Type 1 Storyboard Rules (3 Columns)
         type1_storyboard_rules = """
@@ -573,7 +570,7 @@ Generate the professional {doc_name} Markdown now:"""
                 {"role": "user", "content": prompt}
             ],
             model="llama-3.1-8b-instant", # Keeping 8b for speed/SSE, but increasing capacity
-            temperature=0.1, # Lowest temperature for literal mapping
+            temperature=0.3, # Slightly higher for better semantic grouping/re-formatting
             max_tokens=8000,
         )
         result = chat_completion.choices[0].message.content
