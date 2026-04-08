@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: ai_instructional_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-mypassword}
+      MYSQL_DATABASE: instructional_ai
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+    container_name: ai_instructional_backend
+    depends_on:
+      - db
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - DATABASE_URL=mysql+pymysql://root:${DB_PASSWORD:-mypassword}@db:3306/instructional_ai
+      - SECRET_KEY=${SECRET_KEY:-default_secret_key_change_me_in_production}
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=1440
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend_react
+    container_name: ai_instructional_frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    restart: unless-stopped
+
+volumes:
+  db_data:
