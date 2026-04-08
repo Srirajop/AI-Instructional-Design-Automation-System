@@ -25,8 +25,8 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 sudo sysctl vm.swappiness=10
 
 # 5. Clone the repository
-git clone https://github.com/Srirajop/AI-Instructional-Design-Automation-System.git
-cd AI-Instructional-Design-Automation-System
+git clone https://github.com/Srirajop/AI-Instructional-Design-Automation-System.git /home/ubuntu/app
+cd /home/ubuntu/app
 
 # 6. Create .env file for Docker Compose
 cat <<EOF > .env
