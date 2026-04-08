@@ -17,3 +17,4 @@ youtube-transcript-api
 beautifulsoup4
 python-pptx
 tenacity
+json-repair
