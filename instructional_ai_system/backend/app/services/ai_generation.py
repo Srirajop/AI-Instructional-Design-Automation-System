@@ -259,7 +259,7 @@ Generate 5-8 screens for Module {module_num} now:"""
             {"role": "user", "content": prompt}
         ],
         model="llama-3.1-8b-instant",
-        temperature=0.3,
+        temperature=0.7,
         max_tokens=2000,
     )
     return r.choices[0].message.content
@@ -301,7 +301,7 @@ Generate 5-8 rows for Module {module_num} now:"""
             {"role": "user", "content": prompt}
         ],
         model="llama-3.1-8b-instant",
-        temperature=0.3,
+        temperature=0.7,
         max_tokens=2000,
     )
     return r.choices[0].message.content
