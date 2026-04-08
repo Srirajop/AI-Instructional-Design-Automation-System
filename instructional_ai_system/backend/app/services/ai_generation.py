@@ -527,12 +527,17 @@ def beautify_uploaded_content(api_key: str, content: str, target_type: str, stor
         else:
             type_rules = type1_storyboard_rules
 
+        overview_rule = ""
+        if target_type == "design_doc":
+            overview_rule = '4. STRUCTURE: Add a professional "PROJECT INFORMATION" and "COURSE OVERVIEW" section at the VERY TOP.'
+        else:
+            overview_rule = '4. STRUCTURE: DO NOT include Project Information or Course Overview. Start directly with the first Module or Screen header.'
+
         prompt = f"""You are an expert Instructional Designer. 
 I have extracted raw text from an uploaded file (likely an Excel or PPTX). 
-This text is a raw dump and looks messy.
 
 TASK:
-Convert this raw text into a professional {doc_name} in Markdown format.
+Convert this raw text into a professional {doc_name} ONLY in Markdown format.
 
 THE INPUT DATA:
 This is raw text extracted from a file. If it was extracted from a spreadsheet, columns will be separated by pipes (|).
@@ -547,14 +552,8 @@ STRICT RULES:
    - The separator line MUST appear immediately after the header row (e.g. |---|---|---|)
    - There MUST be a blank line before the table header and after the last table row
    - Do NOT wrap table rows in bold (**) markers
-   - Example of CORRECT table:
 
-| Column A | Column B | Column C |
-|---|---|---|
-| Data 1 | Data 2 | Data 3 |
-
-4. STRUCTURE (General):
-   - Add a professional "PROJECT INFORMATION" and "COURSE OVERVIEW" section at the VERY TOP.
+{overview_rule}
 
 5. FORMAT:
    - Use professional language. No AI fluff.
@@ -562,20 +561,20 @@ STRICT RULES:
    - Do NOT use heading syntax (# or ##) on any line that contains pipe characters (|).
 
 RAW EXTRACTED CONTENT:
-{content[:4000]}
+{content[:25000]}
 
 Generate the professional {doc_name} Markdown now:"""
 
-        # Restored Groq as primary
-        print("Using Groq for Beautify...")
+        # Using a higher-tier model for complex beautification tasks to ensure 100% literal mapping
+        print("Using Llama-3.1-70b/8b for Beautify...")
         chat_completion = client.chat.completions.create(
             messages=[
-                {"role": "system", "content": "You are an expert Instructional Designer who converts raw data into professional, industry-standard documents."},
+                {"role": "system", "content": "You are an expert Instructional Designer. You strictly follow formatting rules and 100% literal mapping of content. No summaries."},
                 {"role": "user", "content": prompt}
             ],
-            model="llama-3.1-8b-instant",
-            temperature=0.3, 
-            max_tokens=2000,
+            model="llama-3.1-8b-instant", # Keeping 8b for speed/SSE, but increasing capacity
+            temperature=0.1, # Lowest temperature for literal mapping
+            max_tokens=8000,
         )
         result = chat_completion.choices[0].message.content
         return fix_markdown_tables(result)
