@@ -255,11 +255,11 @@ Generate 5-8 screens for Module {module_num} now:"""
 
     r = client.chat.completions.create(
         messages=[
-            {"role": "system", "content": "You are a senior eLearning Storyboard Developer. Write production-ready storyboards. OST = real learner text. Audio = actual narrator script (conversational, never meta-descriptions like 'The narrator explains'). Visual = specific graphic designer directions with named images and animations. No AI slop."},
+            {"role": "system", "content": "You are a senior eLearning Storyboard Developer. Write production-ready storyboards. OST = real learner text. Audio = actual narrator script. Visual = specific graphic designer directions. No AI slop. CRITICAL: Every table row MUST be ONE PHYSICAL LINE. Use <br> for all internal line breaks."},
             {"role": "user", "content": prompt}
         ],
         model="llama-3.1-8b-instant",
-        temperature=0.7,
+        temperature=0.3,
         max_tokens=2000,
     )
     return r.choices[0].message.content
@@ -297,11 +297,11 @@ Generate 5-8 rows for Module {module_num} now:"""
 
     r = client.chat.completions.create(
         messages=[
-            {"role": "system", "content": "You are a senior eLearning Storyboard Developer. Write production-ready storyboards. On-screen text = real learner content. Audio = actual narrator script (conversational, never 'The narrator explains'). Visual = specific developer directions. No AI slop."},
+            {"role": "system", "content": "You are a senior eLearning Storyboard Developer. Write production-ready storyboards. On-screen text = real learner content. Audio = actual narrator script. Visual = specific developer directions. No AI slop. CRITICAL: Every table row MUST be ONE PHYSICAL LINE. Use <br> for all internal line breaks."},
             {"role": "user", "content": prompt}
         ],
         model="llama-3.1-8b-instant",
-        temperature=0.7,
+        temperature=0.3,
         max_tokens=2000,
     )
     return r.choices[0].message.content
@@ -406,41 +406,42 @@ def fix_markdown_tables(text: str) -> str:
             i += 1
             continue
 
-        if pipe_count >= 2 or (stripped.startswith('|') and stripped.endswith('|')):
-            # This is a likely table row. Ensure it starts and ends with pipes.
+        # Logic: If a line has 2+ pipes, it's a row.
+        # If the next few lines are "loose" (0 pipes or 1 pipe), they belong to this row.
+        if pipe_count >= 2:
+            # Ensure it starts and ends with pipes.
             if not stripped.startswith('|'): stripped = '| ' + stripped
             if not stripped.endswith('|'): stripped = stripped + ' |'
             
-            # Look ahead for continuation lines (lines with NO pipes or very few pipes)
+            # Extract cells
             current_cells = [c.strip() for c in stripped[1:-1].split('|')]
             
             j = i + 1
             while j < len(pass1):
                 next_line = pass1[j]
                 next_stripped = next_line.strip()
-                if not next_stripped: break # Stop at empty line
+                
+                # If next line is empty, skip it and continue lookahead (AI often adds random newlines)
+                if not next_stripped:
+                    j += 1
+                    continue
                 
                 next_pipe_count = next_stripped.count('|')
-                # If next line has significantly fewer pipes, it's a continuation
-                if next_pipe_count < pipe_count - 1 and not next_stripped.startswith('#'):
-                    # Merge into the LAST non-empty cell of the current row
-                    # or try to match by position if it has SOME pipes
-                    if next_pipe_count == 0:
-                        # Append to the last non-empty cell
-                        for idx in range(len(current_cells)-1, -1, -1):
-                            if current_cells[idx]:
-                                current_cells[idx] += '<br>' + next_stripped
-                                break
-                        else:
-                            current_cells[0] += '<br>' + next_stripped
-                    else:
-                        # Partial pipes - try to append to cells
-                        next_cells = [c.strip() for c in next_stripped.replace('|', ' ').split() if c.strip()]
-                        if next_cells:
-                             current_cells[-1] += '<br>' + ' '.join(next_cells)
-                    j += 1
-                else:
+                
+                # CRITICAL: If the next line has 2+ pipes, it's definitely a NEW row. Stop lookahead.
+                if next_pipe_count >= 2:
                     break
+                    
+                # If it's a header or obvious non-table text, stop.
+                if next_stripped.startswith('#') or next_stripped.upper().startswith('SCREEN') or next_stripped.upper().startswith('MODULE'):
+                    break
+                
+                # Merge into the last non-empty cell (usually Actions/Visuals or OST)
+                for idx in range(len(current_cells)-1, -1, -1):
+                    if current_cells[idx] or idx == 0:
+                        current_cells[idx] += '<br>' + next_stripped
+                        break
+                j += 1
             
             final.append('| ' + ' | '.join(current_cells) + ' |')
             i = j
