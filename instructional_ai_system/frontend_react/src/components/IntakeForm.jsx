@@ -22,6 +22,7 @@ export default function IntakeForm({ onBack, onComplete }) {
         objective_3: '',
         interactivity_level: 'Level 1 – Informational (content + graphics + knowledge checks)', // default
         output_required: 'Design Document', // default
+        preferred_english: 'American English',
         num_modules: 5 // default
     });
 
@@ -233,6 +234,33 @@ export default function IntakeForm({ onBack, onComplete }) {
                                 <option>Storyboard</option>
                                 <option>Both Design Document and Storyboard</option>
                             </select>
+                        </div>
+                        <div className="form-group mb-0">
+                            <label className="form-label">Preferred English *</label>
+
+                            <div className="flex gap-6 mt-2">
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        name="preferred_english"
+                                        value="American English"
+                                        checked={formData.preferred_english === "American English"}
+                                        onChange={handleChange}
+                                    />
+                                    American English
+                                </label>
+
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        name="preferred_english"
+                                        value="British English"
+                                        checked={formData.preferred_english === "British English"}
+                                        onChange={handleChange}
+                                    />
+                                    British English
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>

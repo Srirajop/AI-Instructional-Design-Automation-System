@@ -100,6 +100,7 @@ Learning Objectives:
 
 Interactivity Level: {intake_data.get('interactivity_level', '')}
 Output Required: {intake_data.get('output_required', '')}
+Preferred English: {intake_data.get('preferred_english', 'American English')}
 """
 
 @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=2, min=4, max=30), reraise=True)
@@ -190,6 +191,7 @@ CRITICAL INSTRUCTIONS FOR GENERATION:
    - Devices: Desktop/Laptop, Tablet
 
 IMPORTANT INSTRUCTIONS:
+- LANGUAGE: Write the entire document in {intake_data.get('preferred_english', 'American English')}. Follow the spelling, grammar, punctuation, vocabulary, and writing conventions of that English variant consistently throughout the document.
 - **TONE**: Write in a **natural, professional human voice**. Avoid AI buzzwords like "delve", "comprehensive tapestry", "ensure", "foster". Use active voice.
 - **NO EXTRA HEADINGS**: Do not add extra bold section headers (e.g. "**Project Information**") before the numbered sections (e.g. "1. PROJECT INFORMATION"). Start sections directly with the number.
 - **NO REPETITION**: Do not repeat phrasing across modules. Make each strategy unique and specific to the content.
@@ -238,6 +240,7 @@ RULES:
 - VISUAL: Specific designer directions. Name images ("Show static image of X"), describe animations, layout, navigation.
 - No placeholders. No AI buzzwords. Content from source only.
 - Use <br> for line breaks in cells. Each row = ONE line.
+- LANGUAGE: Write the entire storyboard in {intake_data.get('preferred_english', 'American English')}. Follow the spelling, grammar, punctuation, and vocabulary conventions of that English variant consistently.
 
 FORMAT:
 
@@ -255,7 +258,7 @@ Generate 5-8 screens for Module {module_num} now:"""
 
     r = client.chat.completions.create(
         messages=[
-            {"role": "system", "content": "You are a senior eLearning Storyboard Developer. Write production-ready storyboards. OST = real learner text. Audio = actual narrator script. Visual = specific graphic designer directions. No AI slop. CRITICAL: Every table row MUST be ONE PHYSICAL LINE. Use <br> for all internal line breaks."},
+            {"role": "system", "content": "You are a senior eLearning Storyboard Developer. Write production-ready storyboards in the English variant requested by the user. OST = real learner text. Audio = actual narrator script. Visual = specific graphic designer directions. No AI slop. CRITICAL: Every table row MUST be ONE PHYSICAL LINE. Use <br> for all internal line breaks."},
             {"role": "user", "content": prompt}
         ],
         model="llama-3.1-8b-instant",
@@ -284,6 +287,7 @@ RULES:
 - STATUS: "Draft".
 - ACTIONS: Production notes ("Slide design required", "Animation needed").
 - Use <br> for line breaks. Each row = ONE line. 7 columns exactly.
+- LANGUAGE: Write the entire storyboard in {intake_data.get('preferred_english', 'American English')}. Follow the spelling, grammar, punctuation, and vocabulary conventions of that English variant consistently.
 
 FORMAT:
 
@@ -297,7 +301,7 @@ Generate 5-8 rows for Module {module_num} now:"""
 
     r = client.chat.completions.create(
         messages=[
-            {"role": "system", "content": "You are a senior eLearning Storyboard Developer. Write production-ready storyboards. On-screen text = real learner content. Audio = actual narrator script. Visual = specific developer directions. No AI slop. CRITICAL: Every table row MUST be ONE PHYSICAL LINE. Use <br> for all internal line breaks."},
+            {"role": "system", "content": "You are a senior eLearning Storyboard Developer. Write production-ready storyboards in the English variant requested by the user. On-screen text = real learner content. Audio = actual narrator script. Visual = specific developer directions. No AI slop. CRITICAL: Every table row MUST be ONE PHYSICAL LINE. Use <br> for all internal line breaks."},
             {"role": "user", "content": prompt}
         ],
         model="llama-3.1-8b-instant",
