@@ -112,7 +112,8 @@ def generate_design_document(api_key: str, intake_data: Dict, content: str) -> s
 
         client = Groq(api_key=api_key)
         strategies = get_strategy_for_level(intake_data.get('interactivity_level', ''))
-        
+        question_count = intake_data.get("question_count", "10")
+        difficulty = intake_data.get("difficulty_level", "Medium")
         prompt = f"""You are an expert Instructional Designer creating a comprehensive Design Document.
         
 INTAKE INFORMATION:
@@ -186,7 +187,70 @@ CRITICAL INSTRUCTIONS FOR GENERATION:
    - Summative: [Final assessment details]
    - Criteria: [Pass/fail criteria]
 
-7. TECHNICAL SPECIFICATIONS
+7. KNOWLEDGE CHECK
+Generate the Knowledge Check using EXACTLY the following format.
+
+Do NOT write the questions in paragraph form.
+Each option must appear on its own line.
+Leave one blank line between questions.
+
+## KNOWLEDGE CHECK
+
+### Module 1
+
+Question 1
+
+A. Option
+
+B. Option
+
+C. Option
+
+D. Option
+
+Correct Answer: A
+
+Explanation: One or two sentences.
+
+Question 2
+
+A. Option
+
+B. Option
+
+C. Option
+
+D. Option
+
+Correct Answer: C
+
+Explanation: One or two sentences.
+
+### Module 2
+
+Continue using the exact same structure.
+IMPORTANT:
+- Never place all questions on one line.
+- Every option (A, B, C, D) must be on a separate line.
+- Every question must include a Correct Answer and Explanation.
+- Follow this format exactly.
+After the Assessment Strategy section, generate a Knowledge Check section.
+
+The Knowledge Check must contain exactly {question_count} multiple-choice questions based on the course content.
+
+Instructions:
+- Distribute the questions across all modules as evenly as possible.
+- Each question must test understanding of important concepts from the corresponding module.
+- Each question must include:
+    - Question
+    - Four options (A, B, C, D)
+    - Correct Answer
+    - Brief Explanation (1–2 sentences)
+- Questions should progress from basic recall to application-level thinking.
+- Avoid repeating similar questions.
+- Ensure every answer is factually correct and derived from the source material.
+
+8. TECHNICAL SPECIFICATIONS
    - LMS: SCORM 1.2
    - Devices: Desktop/Laptop, Tablet
 
