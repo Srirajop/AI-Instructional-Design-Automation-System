@@ -129,7 +129,7 @@ REQUIRED ASSESSMENT TYPES:
 {strategies['assessment']}
 
 SOURCE CONTENT:
-{content[:8000]}
+{content[:4000]}
 
 TASK:
 Create a DETAILED Design Document following this EXACT structure.
@@ -154,10 +154,6 @@ The user wants "EXtreme Detail" and "Human Creativity" - do not summarize.
 
 4. MODULE BREAKDOWN (CRITICAL: Use this EXACT table format with pipe separators - NO Markdown formatting inside cells)
 
-Here is a GOLD STANDARD EXAMPLE of the detail required (Cybersecurity theme):
-| Module | Delivery Mode | Learning Objectives | Topics | Recommended Strategy | Activities/Assessment | Duration |
-|--------|---------------|---------------------|--------|----------------------|-----------------------|----------|
-| Module 1: Introduction to Cybersecurity | Self-paced eLearning | • Define basic cyber security concepts.<br>• Explain why cyber security is critical for organizations.<br>• Identify common types of malware and cyber attacks encountered in day-to-day work.<br>• Recognize early warning signs of cyber threats.<br>• Understand the impact of security breaches on business continuity. | • Definition of Cyber Security<br>• Importance of Cyber Security<br>• Cyber Security in the Digital World<br>• Malware & Ransomware:<br>&nbsp;&nbsp;- Definition of malware and its types (viruses, worms, spyware, trojans).<br>&nbsp;&nbsp;- What is ransomware and how does it work?<br>&nbsp;&nbsp;- Consequences of malware and ransomware attacks.<br>• Social Engineering Attack:<br>&nbsp;&nbsp;- What is social engineering?<br>&nbsp;&nbsp;- Examples: pretexting, baiting, tailgating, and impersonation. | Real-world cyberattack examples set the stage, immediately immersing learners in the stakes of security. Interactive simulations then challenge users to identify phishing attempts in a safe, controlled environment. Case studies reveal the business impact of data breaches, followed by role-playing activities where learners must make critical security decisions under time pressure. The learning path concludes with a hands-on drag-and-drop exercise matching threats to defense strategies. | • Drag and drop cybersecurity concepts<br>• Multiple-choice questions on cybersecurity basics. | 2 hour |
 
 NOW, generate the table for THIS course ({intake_data.get('course_title', 'Untitled')}) following that EXACT LEVEL OF DETAIL.
 
@@ -186,69 +182,146 @@ CRITICAL INSTRUCTIONS FOR GENERATION:
    - Formative: [Knowledge checks details]
    - Summative: [Final assessment details]
    - Criteria: [Pass/fail criteria]
-
 7. KNOWLEDGE CHECK
+
 Generate the Knowledge Check using EXACTLY the following format.
 
 Do NOT write the questions in paragraph form.
 Each option must appear on its own line.
 Leave one blank line between questions.
 
-## KNOWLEDGE CHECK
+7. KNOWLEDGE CHECK
 
-### Module 1
+Generate a Knowledge Check after the Assessment Strategy using the following structure.
 
+For each module include:
+- Question Type
+- Question
+- Options (MCQ only)
+- Correct Answer
+- Explanation
+
+Supported question types:
+- Multiple Choice
+- True / False
+- Fill in the Blank
+- Scenario-Based
+
+Formatting Rules:
+- Number questions sequentially.
+- Each option must appear on a separate line.
+- Leave one blank line between questions.
+- Include at least one question for every module.
+Generate exactly {question_count} assessment questions based on the course content.
+
+Distribute the assessment types intelligently across all modules while maintaining a balanced mix.
+
+Recommended distribution:
+
+- 40% Multiple Choice
+- 20% True / False
+- 20% Fill in the Blank
+- 20% Scenario-Based
+
+If the total number of questions does not divide evenly among assessment types, prioritize Multiple Choice and Scenario-Based questions.
+
+The assessment mix should remain appropriate for both the selected interactivity level and the uploaded course content.
+
+Instructions
+
+- Generate exactly {question_count} questions.
+
+- Difficulty Level: {difficulty}
+
+- Distribute the {question_count} questions as evenly as possible across all modules.
+
+- Every module must contain at least one Knowledge Check question.
+
+- If an equal distribution is not possible, assign the extra questions to the largest or most concept-rich modules.
+
+- Number questions sequentially throughout the Knowledge Check.
+
+Example:
+
+Module 1
 Question 1
-
-A. Option
-
-B. Option
-
-C. Option
-
-D. Option
-
-Correct Answer: A
-
-Explanation: One or two sentences.
-
 Question 2
 
-A. Option
+Module 2
+Question 3
+Question 4
 
-B. Option
+Module 3
+Question 5
+Question 6
 
-C. Option
+- Questions must assess only concepts taught within their corresponding module.
 
-D. Option
+- Do NOT ask questions about concepts that have not yet been introduced.
 
-Correct Answer: C
+Apply the selected difficulty consistently throughout the Knowledge Check.
 
-Explanation: One or two sentences.
+Easy
+- Focus on recalling terminology, facts, definitions and basic concepts.
+- Use straightforward wording.
+- Use obvious distractors.
+- Avoid multi-step reasoning.
 
-### Module 2
+Medium
+- Test conceptual understanding and practical application.
+- Include workplace examples where appropriate.
+- Require interpretation before answering.
 
-Continue using the exact same structure.
-IMPORTANT:
-- Never place all questions on one line.
-- Every option (A, B, C, D) must be on a separate line.
-- Every question must include a Correct Answer and Explanation.
-- Follow this format exactly.
-After the Assessment Strategy section, generate a Knowledge Check section.
+Hard
+- Focus on analysis, evaluation, decision-making and problem solving.
+- Use realistic workplace scenarios.
+- Require learners to apply multiple concepts together.
+- Include plausible distractors that require critical thinking.
 
-The Knowledge Check must contain exactly {question_count} multiple-choice questions based on the course content.
+Assessment Quality Requirements
 
-Instructions:
-- Distribute the questions across all modules as evenly as possible.
-- Each question must test understanding of important concepts from the corresponding module.
-- Each question must include:
+- Include a balanced variety of question types:
+    - Multiple Choice
+    - True / False
+    - Fill in the Blank
+    - Scenario-Based
+
+- Each question must assess an important learning objective from its corresponding module.
+
+- Every question must include:
+    - Question Type
     - Question
-    - Four options (A, B, C, D)
+    - Options (Multiple Choice only)
     - Correct Answer
     - Brief Explanation (1–2 sentences)
-- Questions should progress from basic recall to application-level thinking.
-- Avoid repeating similar questions.
-- Ensure every answer is factually correct and derived from the source material.
+
+- Questions should follow Bloom's Taxonomy progression appropriate for the selected difficulty level, moving from:
+    Recall → Understand → Apply → Analyze → Evaluate
+
+- Do not repeat the same concept unless it is being assessed from a different perspective.
+
+- Avoid duplicate questions.
+
+- Ensure every answer is factually correct.
+
+- Every answer must be derived ONLY from the uploaded source content.
+
+- Do not invent facts.
+
+- Do not generate placeholder text.
+
+- Every question must be fully written using actual concepts from the uploaded source material.
+
+Before returning the Knowledge Check, verify that:
+
+- Exactly {question_count} questions have been generated.
+- Every question belongs to a module.
+- Every module has at least one question.
+- Question numbering is sequential.
+- The selected difficulty level has been followed consistently.
+- The assessment types are balanced.
+- Every answer is supported by the uploaded source material.
+- No placeholder text remains anywhere in the output.
 
 8. TECHNICAL SPECIFICATIONS
    - LMS: SCORM 1.2
@@ -256,10 +329,10 @@ Instructions:
 
 IMPORTANT INSTRUCTIONS:
 - LANGUAGE: Write the entire document in {intake_data.get('preferred_english', 'American English')}. Follow the spelling, grammar, punctuation, vocabulary, and writing conventions of that English variant consistently throughout the document.
-- **TONE**: Write in a **natural, professional human voice**. Avoid AI buzzwords like "delve", "comprehensive tapestry", "ensure", "foster". Use active voice.
-- **NO EXTRA HEADINGS**: Do not add extra bold section headers (e.g. "**Project Information**") before the numbered sections (e.g. "1. PROJECT INFORMATION"). Start sections directly with the number.
-- **NO REPETITION**: Do not repeat phrasing across modules. Make each strategy unique and specific to the content.
-- **NARRATIVE FLOW**: In "Recommended Strategy", tell a story of how the learner experiences the module.
+- TONE: Write in a **natural, professional human voice**. Avoid AI buzzwords like "delve", "comprehensive tapestry", "ensure", "foster". Use active voice.
+- NO EXTRA HEADINGS: Do not add extra bold section headers (e.g. "**Project Information**") before the numbered sections (e.g. "1. PROJECT INFORMATION"). Start sections directly with the number.
+- NO REPETITION: Do not repeat phrasing across modules. Make each strategy unique and specific to the content.
+- NARRATIVE FLOW: In "Recommended Strategy", tell a story of how the learner experiences the module.
 - EXTRACT EXTENSIVE DETAILS from the source content.
 - NO GENERIC PLACEHOLDERS.
 - Do NOT use bold ** or italic * formatting inside the table cells. Keep text clean.
@@ -290,10 +363,14 @@ import time as _time
 
 def _generate_single_module_type1(client, module_num: int, total_modules: int, design_doc: str, intake_data: Dict, content: str, strategies: Dict) -> str:
     """Generate storyboard for a single module (Type 1 format). Kept under 6000 TPM."""
+    module_knowledge_check = extract_module_knowledge_check(design_doc, module_num)
     prompt = f"""Generate storyboard for MODULE {module_num} ONLY (of {total_modules}).
 
 DESIGN DOCUMENT:
 {design_doc[:3000]}
+
+MODULE KNOWLEDGE CHECK:
+{module_knowledge_check}
 
 SOURCE CONTENT:
 {content[:2000]}
@@ -306,6 +383,30 @@ RULES:
 - Use <br> for line breaks in cells. Each row = ONE line.
 - LANGUAGE: Write the entire storyboard in {intake_data.get('preferred_english', 'American English')}. Follow the spelling, grammar, punctuation, and vocabulary conventions of that English variant consistently.
 
+KNOWLEDGE CHECK REQUIREMENTS:
+
+- At the end of every module, generate ONE dedicated Knowledge Check screen.
+
+- Use ONLY the Knowledge Check questions provided under "MODULE KNOWLEDGE CHECK".
+
+- Do NOT generate new questions.
+
+- Do NOT modify the wording of the provided questions unless required for grammar or formatting.
+
+- The Knowledge Check screen must include:
+    - Screen Title: Knowledge Check
+    - Question Type
+    - Question
+    - Options (if applicable)
+    - Correct Answer
+    - Explanation
+    - Audio narration instructing the learner to answer the question before proceeding.
+    - Visual instructions describing interactive answer buttons and immediate learner feedback.
+
+- The Knowledge Check must always be the FINAL screen of Module {module_num}.
+
+- If no Module Knowledge Check is provided, skip the Knowledge Check screen and generate only the instructional screens.
+
 FORMAT:
 
 =============================================================================
@@ -317,8 +418,11 @@ Screen {module_num}.1 Title: [Descriptive Title]
 | ON-SCREEN TEXT (OST) | AUDIO NARRATION | VISUAL INSTRUCTIONS & DEVELOPER NOTES |
 | :--- | :--- | :--- |
 | [Actual text with bullets] | [Actual narration script] | [Specific graphic directions] |
+Generate 5-8 instructional screens followed by ONE Knowledge Check screen for Module {module_num}.
 
-Generate 5-8 screens for Module {module_num} now:"""
+The Knowledge Check screen must always be the FINAL screen of the module.
+
+Return only the storyboard in the specified format."""
 
     r = client.chat.completions.create(
         messages=[
@@ -334,14 +438,20 @@ Generate 5-8 screens for Module {module_num} now:"""
 
 def _generate_single_module_type2(client, module_num: int, total_modules: int, design_doc: str, intake_data: Dict, content: str, strategies: Dict) -> str:
     """Generate storyboard for a single module (Type 2 tabular format). Kept under 6000 TPM."""
+
+    module_knowledge_check = extract_module_knowledge_check(design_doc, module_num)
+
     prompt = f"""Generate Type 2 tabular storyboard for MODULE {module_num} ONLY (of {total_modules}).
+
 
 DESIGN DOCUMENT:
 {design_doc[:3000]}
 
+MODULE KNOWLEDGE CHECK:
+{module_knowledge_check}
+
 SOURCE CONTENT:
 {content[:2000]}
-
 RULES:
 - SECTION: Descriptive names (Introduction, Core Concepts, Activity, Quiz, Summary).
 - TOPICS: Specific objectives and sub-topics from source.
@@ -352,6 +462,29 @@ RULES:
 - ACTIONS: Production notes ("Slide design required", "Animation needed").
 - Use <br> for line breaks. Each row = ONE line. 7 columns exactly.
 - LANGUAGE: Write the entire storyboard in {intake_data.get('preferred_english', 'American English')}. Follow the spelling, grammar, punctuation, and vocabulary conventions of that English variant consistently.
+KNOWLEDGE CHECK REQUIREMENTS:
+
+- At the end of every module, generate ONE dedicated Knowledge Check screen.
+
+- Use ONLY the Knowledge Check questions provided under "MODULE KNOWLEDGE CHECK".
+
+- Do NOT generate new questions.
+
+- Do NOT modify the wording of the provided questions unless required for grammar or formatting.
+
+- The Knowledge Check screen must include:
+    - Screen Title: Knowledge Check
+    - Question Type
+    - Question
+    - Options (if applicable)
+    - Correct Answer
+    - Explanation
+    - Audio narration instructing the learner to answer the question before proceeding.
+    - Visual instructions describing interactive answer buttons and immediate learner feedback.
+
+- The Knowledge Check must always be the FINAL screen of Module {module_num}.
+
+- If no Module Knowledge Check is provided, skip the Knowledge Check screen and generate only the instructional screens.
 
 FORMAT:
 
@@ -360,8 +493,11 @@ MODULE {module_num}: [Title from Design Doc]
 | Section | Topics | Visual Instructions/Developer Notes | On-screen text | Audio Narration | Status | Actions required |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | [Name] | [Topics] | [Visual directions] | [Actual OST] | [Actual script] | Draft | [Actions] |
+Generate 5-8 instructional rows followed by ONE Knowledge Check row for Module {module_num}.
 
-Generate 5-8 rows for Module {module_num} now:"""
+The Knowledge Check must always be the FINAL row of the module.
+
+Return only the storyboard in the specified format."""
 
     r = client.chat.completions.create(
         messages=[
@@ -379,7 +515,52 @@ Generate 5-8 rows for Module {module_num} now:"""
 def _call_module_with_retry(generate_fn, client, module_num, total_modules, design_doc, intake_data, content, strategies):
     """Wrapper to retry individual module generation with exponential backoff for rate limits."""
     return generate_fn(client, module_num, total_modules, design_doc, intake_data, content, strategies)
+def extract_module_knowledge_check(design_doc: str, module_num: int) -> str:
+    """
+    Extract the Knowledge Check for a specific module from the Design Document.
+    """
+    if not design_doc:
+        return ""
 
+    start = design_doc.find("7. KNOWLEDGE CHECK")
+    if start == -1:
+        return ""
+
+    knowledge_section = design_doc[start:]
+
+    possible_headers = [
+        f"### Module {module_num}",
+        f"Module {module_num}"
+    ]
+
+    module_start = -1
+ 
+    for header in possible_headers:
+        module_start = knowledge_section.find(header)
+        if module_start != -1:
+            break
+
+    possible_next_headers = [
+        f"### Module {module_num + 1}",
+        f"Module {module_num + 1}"
+    ]
+
+
+    if module_start == -1:
+        return ""
+
+    module_end = -1
+
+    for header in possible_next_headers:
+        module_end = knowledge_section.find(header, module_start)
+        if module_end != -1:
+            break
+    
+
+    if module_end == -1:
+        return knowledge_section[module_start:].strip()
+
+    return knowledge_section[module_start:module_end].strip()
 
 def generate_storyboard(api_key: str, design_doc: str, intake_data: Dict, content: str, storyboard_type: str) -> str:
     """Generate Storyboard module-by-module to avoid token truncation."""
@@ -407,13 +588,10 @@ def generate_storyboard(api_key: str, design_doc: str, intake_data: Dict, conten
             # 20s gap prevents TPM (tokens per minute) limit errors with larger outputs
             if i < num_modules:
                 _time.sleep(20)
-
         return "\n\n---\n\n".join(all_modules)
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating Storyboard: {str(e)}")
-
-
 
 def fix_markdown_tables(text: str) -> str:
     """Post-process AI output to fix common markdown table formatting issues.
