@@ -15,20 +15,31 @@ export default function IntakeForm({ onBack, onComplete }) {
         business_unit: 'Sales', // default
         course_type: 'Regulatory / Compliance', // default
         target_audience: '',
-        experience_level: 'New to role', // default
-        geographic_spread: '',
+        experience_level: 'Fresher', // default
+        geographic_spread: 'Global',
+        language_preference: 'American English',
+        style_guide: 'Plain language, active voice, consistent terminology, correct spelling and grammar',
+        guidelines: '',
+        knowledge_check_types: 'Multiple Choice, True/False, Fill in the Blank, Scenario-Based',
+        knowledge_check_count: 3,
+        knowledge_check_difficulty: 'Mixed',
         objective_1: '',
         objective_2: '',
         objective_3: '',
-        interactivity_level: 'Level 1 – Informational (content + graphics + knowledge checks)', // default
+        interactivity_level: 'Level 1 - Informational (content + graphics + knowledge checks)', // default
         output_required: 'Design Document', // default
         preferred_english: 'American English',
         num_modules: 5 // default
     });
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const { name, value, type, selectedOptions } = e.target;
+        if (type === 'select-multiple') {
+            const values = Array.from(selectedOptions, option => option.value);
+            setFormData(prev => ({ ...prev, [name]: values.join(', ') }));
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const [showFolderPicker, setShowFolderPicker] = useState(false);
@@ -167,12 +178,27 @@ export default function IntakeForm({ onBack, onComplete }) {
                         <div className="form-group mb-0 flex gap-4">
                             <div className="flex-1">
                                 <label className="form-label">Experience Level *</label>
-                                <select className="form-control" name="experience_level" value={formData.experience_level} onChange={handleChange}>
-                                    <option>New to role</option>
-                                    <option>0-2 years</option>
-                                    <option>2-5 years</option>
-                                    <option>5+ years</option>
-                                </select>
+                                <div className="flex flex-col gap-2 p-2 form-control" style={{ height: 'auto', minHeight: '40px' }}>
+                                    {['Fresher', '1-2 years', '2-5 years', '5+ years'].map(opt => {
+                                        const isChecked = (formData.experience_level || '').split(', ').includes(opt);
+                                        return (
+                                            <label key={opt} className="flex items-center gap-2 text-sm cursor-pointer hover:bg-slate-50 p-1 rounded" style={{ margin: 0 }}>
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={isChecked}
+                                                    onChange={(e) => {
+                                                        let current = (formData.experience_level || '').split(', ').filter(Boolean);
+                                                        if (e.target.checked) current.push(opt);
+                                                        else current = current.filter(item => item !== opt);
+                                                        setFormData(prev => ({ ...prev, experience_level: current.join(', ') }));
+                                                    }}
+                                                    style={{ accentColor: 'var(--primary)', width: '16px', height: '16px', margin: 0, cursor: 'pointer' }}
+                                                />
+                                                {opt}
+                                            </label>
+                                        );
+                                    })}
+                                </div>
                             </div>
                             <div className="flex-1">
                                 <label className="form-label" title="Select the number of modules to generate (excluding Intro/Summary)">Number of Learning Modules: {formData.num_modules}</label>
@@ -193,7 +219,17 @@ export default function IntakeForm({ onBack, onComplete }) {
                         </div>
                         <div className="form-group mb-0">
                             <label className="form-label">Geographic Spread</label>
-                            <input type="text" className="form-control" name="geographic_spread" placeholder="e.g., Global, North America" value={formData.geographic_spread} onChange={handleChange} />
+                            <select className="form-control" name="geographic_spread" value={formData.geographic_spread} onChange={handleChange}>
+                                <option>Global</option>
+                                <option>North America</option>
+                                <option>United States</option>
+                                <option>United Kingdom</option>
+                                <option>Europe</option>
+                                <option>Asia Pacific</option>
+                                <option>Middle East and Africa</option>
+                                <option>Latin America</option>
+                                <option>Diverse / Multi-region</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -221,10 +257,10 @@ export default function IntakeForm({ onBack, onComplete }) {
                         <div className="form-group mb-0">
                             <label className="form-label">Level of Interactivity *</label>
                             <select className="form-control" name="interactivity_level" value={formData.interactivity_level} onChange={handleChange}>
-                                <option>Level 1 – Informational (content + graphics + knowledge checks)</option>
-                                <option>Level 2 – Medium Interactivity (Level 1 + animations + interactions)</option>
-                                <option>Level 3 – High Interactivity (scenarios, simulations)</option>
-                                <option>Level 4 – Gamification</option>
+                                <option>Level 1 - Informational (content + graphics + knowledge checks)</option>
+                                <option>Level 2 - Medium Interactivity (Level 1 + animations + interactions)</option>
+                                <option>Level 3 - High Interactivity (scenarios, simulations)</option>
+                                <option>Level 4 - Gamification</option>
                             </select>
                         </div>
                         <div className="form-group mb-0">
@@ -265,9 +301,55 @@ export default function IntakeForm({ onBack, onComplete }) {
                     </div>
                 </div>
 
-                {/* Section 5: File Upload & URLs */}
                 <div className="card">
-                    <h3 className="text-lg font-semibold mb-2 border-b pb-2">5. Source Material</h3>
+                    <h3 className="text-lg font-semibold mb-4 border-b pb-2">5. Knowledge Checks and Language</h3>
+                    <div className="grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                        <div className="form-group mb-0">
+                            <label className="form-label">Language Preference</label>
+                            <select className="form-control" name="language_preference" value={formData.language_preference} onChange={handleChange}>
+                                <option>American English</option>
+                                <option>British English</option>
+                            </select>
+                        </div>
+                        <div className="form-group mb-0">
+                            <label className="form-label">Knowledge Check Difficulty</label>
+                            <select className="form-control" name="knowledge_check_difficulty" value={formData.knowledge_check_difficulty} onChange={handleChange}>
+                                <option>Mixed</option>
+                                <option>Easy</option>
+                                <option>Medium</option>
+                                <option>Hard</option>
+                            </select>
+                        </div>
+                        <div className="form-group mb-0">
+                            <label className="form-label">Knowledge Check Questions Per Module: {formData.knowledge_check_count}</label>
+                            <input type="range" className="w-full" name="knowledge_check_count" min="1" max="8" value={formData.knowledge_check_count} onChange={handleChange} style={{ accentColor: 'var(--primary)' }} />
+                            <div className="flex justify-between text-xs text-muted mt-1"><span>1</span><span>8</span></div>
+                        </div>
+                        <div className="form-group mb-0">
+                            <label className="form-label">Knowledge Check Types</label>
+                            <input type="text" className="form-control" name="knowledge_check_types" value={formData.knowledge_check_types} onChange={handleChange} />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Section 6: Guidelines */}
+                <div className="card">
+                    <h3 className="text-lg font-semibold mb-4 border-b pb-2">6. Guidelines and Style</h3>
+                    <div className="grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                        <div className="form-group mb-0">
+                            <label className="form-label">Style Guide</label>
+                            <textarea className="form-control" name="style_guide" value={formData.style_guide} onChange={handleChange} style={{ minHeight: '100px', resize: 'vertical' }} />
+                        </div>
+                        <div className="form-group mb-0">
+                            <label className="form-label">Guidelines / Spelling Check Notes</label>
+                            <textarea className="form-control" name="guidelines" placeholder="Add client-specific terminology, tone, words to avoid, or spelling rules." value={formData.guidelines} onChange={handleChange} style={{ minHeight: '100px', resize: 'vertical' }} />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Section 7: File Upload & URLs */}
+                <div className="card">
+                    <h3 className="text-lg font-semibold mb-2 border-b pb-2">7. Source Material</h3>
                     <p className="text-muted text-sm mb-4">Upload documents (PDF, Word, Excel, TXT, PPTX) AND/OR provide external links (YouTube/Websites) to extract source content.</p>
 
                     <div className="grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
@@ -370,3 +452,5 @@ export default function IntakeForm({ onBack, onComplete }) {
         </div>
     );
 }
+
+

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+﻿from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from .. import schemas, models
 from ..dependencies import get_db, get_current_user
@@ -60,10 +60,15 @@ def save_inline_edit(doc_type: str, content: dict, project_id: str, db: Session 
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
         
-    if "design" in doc_type.lower():
+    doc_type_lower = doc_type.lower()
+    if "intake" in doc_type_lower:
+        project.intake_data = content.get('content')
+    elif "design" in doc_type_lower:
         project.design_doc = content.get('content')
-    else:
+    elif "storyboard" in doc_type_lower:
         project.storyboard = content.get('content')
-        
+    else:
+        raise HTTPException(status_code=400, detail="Unsupported document type")        
     db.commit()
     return {"message": "Saved successfully"}
+

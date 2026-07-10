@@ -1,4 +1,4 @@
-import json
+﻿import json
 import re
 from datetime import datetime
 from typing import Dict, Optional
@@ -84,7 +84,6 @@ def get_strategy_for_level(interactivity_level: str) -> Dict[str, str]:
 
 def format_intake_text(intake_data: Dict) -> str:
     """Format intake data into readable text."""
-    # Assuming Intake schema dict
     return f"""
 Course Title: {intake_data.get('course_title', '')}
 Business Unit: {intake_data.get('business_unit', '')}
@@ -92,6 +91,9 @@ Course Type: {intake_data.get('course_type', '')}
 Target Audience: {intake_data.get('target_audience', '')}
 Experience Level: {intake_data.get('experience_level', '')}
 Geographic Spread: {intake_data.get('geographic_spread', '')}
+Language Preference: {intake_data.get('language_preference', 'American English')}
+Style Guide: {intake_data.get('style_guide', 'Clear, professional instructional design language')}
+Guidelines: {intake_data.get('guidelines', '')}
 
 Learning Objectives:
 1. {intake_data.get('objective_1', '')}
@@ -100,7 +102,6 @@ Learning Objectives:
 
 Interactivity Level: {intake_data.get('interactivity_level', '')}
 Output Required: {intake_data.get('output_required', '')}
-Preferred English: {intake_data.get('preferred_english', 'American English')}
 """
 
 @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=2, min=4, max=30), reraise=True)
@@ -128,6 +129,8 @@ REQUIRED INTERACTIVITY TYPES:
 REQUIRED ASSESSMENT TYPES:
 {strategies['assessment']}
 
+{get_knowledge_check_rules(intake_data)}
+{get_quality_rules(intake_data)}
 SOURCE CONTENT:
 {content[:4000]}
 
@@ -154,6 +157,10 @@ The user wants "EXtreme Detail" and "Human Creativity" - do not summarize.
 
 4. MODULE BREAKDOWN (CRITICAL: Use this EXACT table format with pipe separators - NO Markdown formatting inside cells)
 
+Here is a GOLD STANDARD EXAMPLE of the detail required (Cybersecurity theme):
+| Module | Delivery Mode | Learning Objectives | Topics | Recommended Strategy | Activities/Assessment | Duration |
+|--------|---------------|---------------------|--------|----------------------|-----------------------|----------|
+| Module 1: Introduction to Cybersecurity | Self-paced eLearning | • Define basic cyber security concepts.<br>• Explain why cyber security is critical for organizations.<br>• Identify common types of malware and cyber attacks encountered in day-to-day work.<br>• Recognize early warning signs of cyber threats.<br>• Understand the impact of security breaches on business continuity. | • Definition of Cyber Security<br>• Importance of Cyber Security<br>• Cyber Security in the Digital World<br>• Malware & Ransomware:<br>&nbsp;&nbsp;- Definition of malware and its types (viruses, worms, spyware, trojans).<br>&nbsp;&nbsp;- What is ransomware and how does it work?<br>&nbsp;&nbsp;- Consequences of malware and ransomware attacks.<br>• Social Engineering Attack:<br>&nbsp;&nbsp;- What is social engineering?<br>&nbsp;&nbsp;- Examples: pretexting, baiting, tailgating, and impersonation. | Real-world cyberattack examples set the stage, immediately immersing learners in the stakes of security. Interactive simulations then challenge users to identify phishing attempts in a safe, controlled environment. Case studies reveal the business impact of data breaches, followed by role-playing activities where learners must make critical security decisions under time pressure. The learning path concludes with a hands-on drag-and-drop exercise matching threats to defense strategies. | • Drag and drop cybersecurity concepts<br>• Multiple-choice questions on cybersecurity basics. | 2 hour |
 
 NOW, generate the table for THIS course ({intake_data.get('course_title', 'Untitled')}) following that EXACT LEVEL OF DETAIL.
 
@@ -162,36 +169,13 @@ CRITICAL INSTRUCTIONS FOR GENERATION:
 2.  **FORBIDDEN PHRASES**: 
     *   **NEVER start Objectives with**: "This module will...", "Learners will be able to...", "By the end of this module...". **Start directly with the verb** (e.g., "Analyze...", "Create...", "Identify...").
     *   **NEVER start Strategies with**: "This module will...", "In this module...", "Learners will...". **Start with the action** (e.g., "A simulation explores...", "Case studies highlight...", "Interactive scenarios guided the learner...").
-3.  **VARIETY**: Every module MUST sound different. Do not repeat sentence structures.
+3.  **VARIETY**: Every module MUST sound different. Do not repeat sentence structures, examples, activities, or topic blocks.
 4.  **ALIGNMENT**: Ensure "Recommended Strategy" and "Activities/Assessment" align with the specific Learning Objectives and ID Principles provided.
-IMPORTANT TABLE RULES:
-- Generate ONE GitHub-Flavored Markdown table.
 
-Every row must
-
-- begin with |
-
-- end with |
-
-- contain exactly seven columns
-
-Do not insert blank lines inside the table.
-
-Do not insert headings inside the table.
-- Each module must occupy exactly ONE table row.
-
-
-- Separate multiple objectives using <br>.
-
--Never create physical newlines inside a table cell.
-
--Use only <br>.
-
-Every module must occupy exactly one Markdown row.
-- Continue the table until all modules are completed.
 | Module | Delivery Mode | Learning Objectives | Topics | Recommended Strategy | Activities/Assessment | Duration |
 |--------|---------------|---------------------|--------|----------------------|-----------------------|----------|
-| Module 1: [Title] | Self-paced eLearning | [Strong Verb] Objective 1; [Strong Verb] Objective 2; [Strong Verb] Objective 3; [Strong Verb] Objective 4 | Main Topic 1 (Sub-point 1, Sub-point 2); Main Topic 2 (Sub-point 1, Sub-point 2); Main Topic 3 | Write a detailed learning strategy in 2–3 concise sentences describing how learners will engage with the content. Begin with an instructional action, not "Learners will". | Activity aligned with objectives; Knowledge check quiz | [Time] |
+| Module 1: [Title] | Self-paced eLearning | • [Strong Verb] [Objective 1 - Detailed]<br>• [Strong Verb] [Objective 2 - Detailed]<br>• [Strong Verb] [Objective 3 - Detailed]<br>• [Strong Verb] [Objective 4 - Detailed] | • [Main Topic 1]<br>&nbsp;&nbsp;- [Sub-point 1]<br>&nbsp;&nbsp;- [Sub-point 2]<br>• [Main Topic 2]<br>&nbsp;&nbsp;- [Sub-point 1]<br>&nbsp;&nbsp;- [Sub-point 2]<br>• [Main Topic 3] | [EXTREMELY DETAILED strategy. Write 4-6 full sentences. Start with an action or description, NOT "Learners will". Tell a story of the learning experience.] | • [Specific Activity aligned to objectives]<br>• [Quiz details] | [Time] |
+| Module 2: [Title] | Self-paced eLearning | • [Strong Verb] [Objective 1]<br>• [Strong Verb] [Objective 2]<br>• [Strong Verb] [Objective 3]<br>• [Strong Verb] [Objective 4] | • [Main Topic 1]<br>• [Main Topic 2 with detail breakdown]<br>• [Main Topic 3] | [EXTREMELY DETAILED strategy. Different opening style than Module 1. "A branching scenario allows..."] | • [Activity]<br>• [Quiz] | [Time] |
 | ... [GENERATE EXACTLY {intake_data.get('num_modules', '3')} MODULES TOTAL] ... |
 | Knowledge Check | Self-paced eLearning | • Assess understanding | MCQs; Scenario-based questions | Quiz Format | Multiple-choice quiz | 30 min |
 | Summary & Conclusion | Self-paced eLearning | • Review key concepts | Summary & Key takeaways | Recap points | Certificate of Completion | 15 min |
@@ -393,11 +377,10 @@ Before returning the Knowledge Check, verify that:
    - Devices: Desktop/Laptop, Tablet
 
 IMPORTANT INSTRUCTIONS:
-- LANGUAGE: Write the entire document in {intake_data.get('preferred_english', 'American English')}. Follow the spelling, grammar, punctuation, vocabulary, and writing conventions of that English variant consistently throughout the document.
-- TONE: Write in a **natural, professional human voice**. Avoid AI buzzwords like "delve", "comprehensive tapestry", "ensure", "foster". Use active voice.
-- NO EXTRA HEADINGS: Do not add extra bold section headers (e.g. "**Project Information**") before the numbered sections (e.g. "1. PROJECT INFORMATION"). Start sections directly with the number.
-- NO REPETITION: Do not repeat phrasing across modules. Make each strategy unique and specific to the content.
-- NARRATIVE FLOW: In "Recommended Strategy", tell a story of how the learner experiences the module.
+- **TONE**: Write in a **natural, professional human voice**. Avoid AI buzzwords like "delve", "comprehensive tapestry", "ensure", "foster". Use active voice.
+- **NO EXTRA HEADINGS**: Do not add extra bold section headers (e.g. "**Project Information**") before the numbered sections (e.g. "1. PROJECT INFORMATION"). Start sections directly with the number.
+- **NO REPETITION**: Do not repeat phrasing across modules. Make each strategy unique and specific to the content.
+- **NARRATIVE FLOW**: In "Recommended Strategy", tell a story of how the learner experiences the module.
 - EXTRACT EXTENSIVE DETAILS from the source content.
 - NO GENERIC PLACEHOLDERS.
 - Do NOT use bold ** or italic * formatting inside the table cells. Keep text clean.
@@ -456,7 +439,7 @@ Do NOT reproduce the source document.
 
 
 RULES:
-- OST: Actual text learner reads. Real facts and concise learner-facing statements separated with <br>. NEVER "The narrator explains..."
+- OST: Actual text learner reads. Real facts, definitions, bullet points. NEVER "The narrator explains..."
 - AUDIO: Actual narrator script. Conversational, professional, 5-8 sentences. End with "Click Next to continue." NEVER "The narrator says..."
 - VISUAL: Specific designer directions. Name images ("Show static image of X"), describe animations, layout, navigation.
 - No placeholders. No AI buzzwords. Content from source only.
@@ -610,6 +593,9 @@ Do NOT reproduce the source document.
 
 
 RULES:
+{get_quality_rules(intake_data)}
+{get_knowledge_check_rules(intake_data)}
+- Include a Knowledge Check row as the final row for this module.
 - SECTION: Descriptive names (Introduction, Core Concepts, Activity, Quiz, Summary).
 - TOPICS: Specific objectives and concise learner-facing statements separated using <br>.
 - VISUAL: Specific directions ("Show static image of X", animations, layouts, facilitator videos).
@@ -795,7 +781,7 @@ def generate_storyboard(api_key: str, design_doc: str, intake_data: Dict, conten
 
         course_title = intake_data.get('course_title', 'Untitled Course')
         all_modules = []
-        all_modules.append(f"# STORYBOARD — {course_title}\n")
+        all_modules.append(f"# STORYBOARD â€” {course_title}\n")
 
         for i in range(1, num_modules + 1):
             module_content = _call_module_with_retry(
@@ -833,7 +819,7 @@ def fix_markdown_tables(text: str):
     2. Bold wrappers (**) around table rows
     3. Missing leading/trailing pipes
     4. Missing separator lines
-    5. CRITICAL: Merges 'continuation rows' — rows that are missing pipes 
+    5. CRITICAL: Merges 'continuation rows' â€” rows that are missing pipes 
        or have very few pipes, which means the AI split a single cell 
        across multiple lines.
     """
@@ -1067,3 +1053,7 @@ Generate the professional {doc_name} Markdown now:"""
             
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error beautifying content: {str(e)}")
+
+
+
+
