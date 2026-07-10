@@ -1186,3 +1186,43 @@ h6 {
 .hover-expand:hover .lucide {
   transform: translateX(4px);
 }
+/* Structured document tables */
+.markdown-preview table {
+  table-layout: fixed;
+  width: max-content;
+  min-width: 100%;
+  max-width: none;
+}
+
+.markdown-preview th,
+.markdown-preview td {
+  width: 180px;
+  min-width: 180px;
+  max-width: 260px;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
+}
+
+.markdown-preview th:first-child,
+.markdown-preview td:first-child {
+  width: 160px;
+  min-width: 160px;
+}
+
+.markdown-preview th:nth-child(4),
+.markdown-preview td:nth-child(4),
+.markdown-preview th:nth-child(5),
+.markdown-preview td:nth-child(5) {
+  width: 240px;
+  min-width: 240px;
+}
+
+.file-table {
+  table-layout: fixed;
+}
+
+.file-table th,
+.file-table td {
+  overflow-wrap: anywhere;
+}

@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+﻿from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
+import os
 from .. import schemas, models, database, auth
 from ..dependencies import get_db, get_current_user
 
@@ -9,12 +10,13 @@ router = APIRouter()
 
 @router.post("/register", response_model=schemas.UserResponse)
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = db.query(models.User).filter(models.User.email == user.email).first()
+    normalized_email = user.email.strip().lower()
+    db_user = db.query(models.User).filter(models.User.email == normalized_email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
     hashed_password = auth.get_password_hash(user.password)
-    new_user = models.User(name=user.name, email=user.email, hashed_password=hashed_password)
+    new_user = models.User(name=user.name.strip(), email=normalized_email, hashed_password=hashed_password)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -22,7 +24,8 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=schemas.Token)
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.email == form_data.username).first()
+    normalized_email = form_data.username.strip().lower()
+    user = db.query(models.User).filter(models.User.email == normalized_email).first()
     if not user or not auth.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -42,8 +45,9 @@ def read_users_me(current_user: models.User = Depends(get_current_user)):
 from ..services.email import send_password_reset_email
 
 @router.post("/forgot-password")
-async def forgot_password(request: schemas.ForgotPasswordRequest, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.email == request.email).first()
+async def forgot_password(request: Request, payload: schemas.ForgotPasswordRequest, db: Session = Depends(get_db)):
+    normalized_email = payload.email.strip().lower()
+    user = db.query(models.User).filter(models.User.email == normalized_email).first()
     if not user:
         # We return success even if user not found for security reasons
         return {"message": "If this email is registered, a reset link has been sent."}
@@ -54,7 +58,11 @@ async def forgot_password(request: schemas.ForgotPasswordRequest, db: Session = 
         expires_delta=timedelta(minutes=15)
     )
     
-    reset_link = f"http://localhost:5173/reset-password?token={reset_token}"
+    frontend_url = os.getenv("FRONTEND_URL", "").strip().rstrip("/")
+    if not frontend_url:
+        origin = request.headers.get("origin", "").strip().rstrip("/")
+        frontend_url = origin or "http://localhost:5173"
+    reset_link = f"{frontend_url}/reset-password?token={reset_token}"
     
     # Send actual email (background task or await)
     try:
@@ -86,3 +94,4 @@ def reset_password(request: schemas.ResetPasswordRequest, db: Session = Depends(
         
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+

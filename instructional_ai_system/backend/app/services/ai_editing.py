@@ -1,5 +1,5 @@
-"""
-StoryBoard AI — Document Editing Engine v4
+﻿"""
+StoryBoard AI â€” Document Editing Engine v4
 ==========================================
 - Structural cell navigation (no search/replace guessing)
 - Bulk edits: "change all OSTs in module 1"
@@ -13,9 +13,9 @@ import json, re, os, difflib
 from typing import List, Dict, Tuple
 import requests
 
-# ─────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # 1. Document Parsing
-# ─────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def parse_document_into_sections(doc: str) -> List[Dict]:
     sections, lines, current_raw = [], doc.split("\n"), []
@@ -189,7 +189,7 @@ def replace_cell(section: Dict, target_row_id: str, col_index: int, new_content:
     if not " | " in target_row_id and len(rows) == 1 and (section.get("id") == target_row_id or section.get("type") in ["screen", "module"]):
         line_idx_to_update, cells_to_update = rows[0]
     elif " | " in target_row_id and section.get("type") in ["screen", "module"] and len(rows) == 1:
-        # Type 1 storyboard: "Screen 1.6 | Title" — the section has only 1 data row
+        # Type 1 storyboard: "Screen 1.6 | Title" â€” the section has only 1 data row
         line_idx_to_update, cells_to_update = rows[0]
     else:
         # Search for the row within the table (Type 2 or Design Doc)
@@ -274,9 +274,9 @@ def doc_summary(sections: List[Dict], doc_type: str = "Design Document") -> str:
     return "\n".join(out)
 
 
-# ─────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # 2. Diff
-# ─────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def diff_strings(old: str, new: str) -> List[Dict]:
     old, new = old.strip(), new.strip()
@@ -295,9 +295,9 @@ def diff_strings(old: str, new: str) -> List[Dict]:
     return result
 
 
-# ─────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # 3. Hallucination Guard
-# ─────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 BAD = ["please review", "updated content", "i have updated", "here is the updated",
        "as requested", "!--", "[updated", "content goes here", "insert content",
@@ -311,9 +311,9 @@ def is_placeholder(text: str) -> bool:
     return False
 
 
-# ─────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # 4. Intent Classifier
-# ─────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 CLASSIFIER_SYS = """Classify the user message as EDIT or CHAT.
 
@@ -324,7 +324,7 @@ CLASSIFIER_SYS = """Classify the user message as EDIT or CHAT.
 
 **RULES:**
 - EDIT = explicit request to change/update/fix specific content.
-- CHAT = greetings, thanks, general help, or vague requests.
+- CHAT = greetings, thanks, general help, instructional design questions, content development questions, course creation advice, or requests that do not require editing the document.
 
 **INTENT CLASSIFICATION:**
 - If the user says "thanks", "ok", "cool", "done" after an edit, it's CHAT.
@@ -333,6 +333,8 @@ CLASSIFIER_SYS = """Classify the user message as EDIT or CHAT.
 
 **DYNAMIC CHAT REPLY:**
 - If intent is CHAT, generate a natural, context-aware response.
+- For instructional design, content development, assessment, storyboard, language, style guide, or course creation questions, answer with practical recommendations based on the current document context and recent conversation.
+- Ask a brief clarifying question only when the user request cannot be answered from the available context.
 
 Return ONLY JSON:
 {
@@ -366,14 +368,14 @@ def classify_intent(instruction: str, history: List[Dict], groq_key: str) -> Dic
             return {"intent":"EDIT","target_screens":[screen] if screen else [],
                     "col_hint":None,"chat_reply":""}
         return {"intent":"CHAT","target_screens":[],"col_hint":None,
-                "chat_reply":"I'm here to help! I can update your storyboard screens — just let me know what needs to change."}
+                "chat_reply":"I'm here to help! I can update your storyboard screens â€” just let me know what needs to change."}
 
 
-# ─────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # 5. Edit LLM Prompt
-# ─────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-EDIT_SYS = """You are an expert Instructional Design Assistant.
+EDIT_SYS = """You are an expert Instructional Design Assistant for eLearning designers. You help with course structure, storyboard writing, knowledge checks, scenarios, style guides, language variants, readability, and production-ready learning content.
 
 COLUMN INDICES (STORYBOARD / TYPE 1):
   0 = OST, 1 = Audio, 2 = Visual
@@ -395,10 +397,11 @@ RULES:
 3. NEVER use placeholders ("Updated here", etc.).
 4. screen_num MUST match the exact label from the context. If the context uses "Header | Row" (e.g., "Module 1 | Intro"), you MUST return that exact combined string as the screen_num. THIS IS CRITICAL FOR TYPE 2 DOCS.
 5. When doc_type is "Storyboard Type 2", you MUST strictly follow the 7-column map.
+5a. Preserve table structure exactly: do not add or remove columns, and keep cell line breaks as <br>.
 6. CRITICAL: If the user asks to edit MULTIPLE columns (e.g. "update OST and Audio"), you MUST return MULTIPLE separate objects in the `edits` array (one for each `col_index`).
 7. Read the user's request carefully. Do not miss requested columns. If a request fits multiple rows (e.g. "update all activities"), return an object for EACH row.
 
-RESPONSE — STRICT JSON ONLY:
+RESPONSE â€” STRICT JSON ONLY:
 {
   "reasoning": "...", "assistant_reply": "...",
   "edits": [
@@ -409,9 +412,9 @@ RESPONSE — STRICT JSON ONLY:
 }"""
 
 
-# ─────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # 6. Main Entry Point
-# ─────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def ai_edit_document(
     api_key: str,
@@ -432,12 +435,12 @@ def ai_edit_document(
     def fail(msg): return {"assistant_reply": msg, "updated_document": current_doc,
                            "original_document": current_doc, "is_edit": False, "diff": []}
 
-    # ── Step 1: Intent ──
+    # â”€â”€ Step 1: Intent â”€â”€
     dt_lower = doc_type.lower()
     is_sb_type2 = "type 2" in dt_lower
     is_storyboard = "storyboard" in dt_lower and not is_sb_type2
 
-    # If frontend provides explicit selection context, skip classifier — it's always an EDIT
+    # If frontend provides explicit selection context, skip classifier â€” it's always an EDIT
     if selected_screen_num is not None and selected_col_index is not None:
         col_name = selected_col_name
         if not col_name:
@@ -469,7 +472,7 @@ def ai_edit_document(
             "diff": []
         }
 
-    # ── Step 2: Resolve screens/modules ──
+    # â”€â”€ Step 2: Resolve screens/modules â”€â”€
     sections = parse_document_into_sections(current_doc)
     dt_lower = doc_type.lower()
     is_sb_type2 = "type 2" in dt_lower
@@ -539,7 +542,7 @@ def ai_edit_document(
             if is_storyboard and re.match(r"^\d+\.\d+$", t): expanded.append(f"{t}") # Keep raw as we match on id
             else: expanded.append(t)
 
-    # ── Step 3: Build LLM context ──
+    # â”€â”€ Step 3: Build LLM context â”€â”€
     if is_storyboard:
         cn = ["OST", "Audio Narration", "Visual Instructions"]
     elif is_sb_type2:
@@ -600,7 +603,7 @@ def ai_edit_document(
 
     user_prompt = f"USER REQUEST: {user_instruction}\n{hist_str}\n{selection_ctx}\n{ctx}{type2_hint}\nTARGETS: {expanded or 'Determine from request'}\nCOL HINT: {intent_data.get('col_hint')}\nDOCUMENT TYPE: {doc_type}"
 
-    # ── Step 4: Call LLM ──
+    # â”€â”€ Step 4: Call LLM â”€â”€
     try:
         full_prompt = EDIT_SYS + "\n\n" + user_prompt
         resp = requests.post(API_URL, json={"prompt": full_prompt},
@@ -611,7 +614,7 @@ def ai_edit_document(
     except Exception as e:
         return fail(f"AI call failed: {str(e)}")
 
-    # ── Step 5: Apply ──
+    # â”€â”€ Step 5: Apply â”€â”€
     if not parsed.get("is_edit") or not parsed.get("edits"):
         return {"assistant_reply": parsed.get("assistant_reply", "No changes made."),
                 "updated_document": current_doc, "original_document": current_doc,
@@ -656,7 +659,7 @@ def ai_edit_document(
         if is_placeholder(nc):
             warns.append(f"Skipped placeholder for {sn} col {ci}"); continue
 
-        # ── Find correct section target ──
+        # â”€â”€ Find correct section target â”€â”€
         target_sect = None
         header_sn = sn
         row_sn = None
@@ -726,7 +729,7 @@ def ai_edit_document(
 
     updated = sections_to_doc(sections)
     reply = parsed.get("assistant_reply", "Done! Review the highlighted changes.")
-    if warns: reply += "\n\n⚠️ " + " | ".join(warns)
+    if warns: reply += "\n\nâš ï¸ " + " | ".join(warns)
 
     return {"assistant_reply": reply,
             "updated_document": updated if applied else current_doc,
@@ -747,3 +750,5 @@ def _extract_json(raw: str) -> Dict:
             if isinstance(p, dict): return p
     except Exception: pass
     return {"reasoning":"","assistant_reply":raw.strip(),"edits":[],"is_edit":False}
+
+

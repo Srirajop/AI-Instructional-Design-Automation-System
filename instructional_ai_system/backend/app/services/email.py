@@ -1,4 +1,4 @@
-import os
+﻿import os
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 from pydantic import EmailStr
 import logging
@@ -18,11 +18,7 @@ async def send_password_reset_email(email_to: str, reset_link: str):
     username = os.getenv("MAIL_USERNAME", "").strip()
     password = os.getenv("MAIL_PASSWORD", "").strip()
     
-    # Sanitize password for logging (just show first/last chars)
-    safe_pass = f"{password[0]}***{password[-1]}" if len(password) > 2 else "***"
-    print(f"[DEBUG EMAIL] Sending to: {email_to}")
-    print(f"[DEBUG EMAIL] Using Username: {username}")
-    print(f"[DEBUG EMAIL] Using Password (sanitized): {safe_pass}")
+    logger.info(f"Preparing password reset email for {email_to} using SMTP user {username or '<not configured>'}")
 
     # Gmail app passwords are 16 chars, sometimes users copy with spaces
     password = password.replace(" ", "")
@@ -66,7 +62,7 @@ async def send_password_reset_email(email_to: str, reset_link: str):
                     </div>
                     <p>This link will expire in 15 minutes. If you did not request this, please ignore this email.</p>
                     <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 2rem 0;" />
-                    <p style="font-size: 0.8rem; color: #64748B;">© 2024 e-Learning AI Inc. All rights reserved.</p>
+                    <p style="font-size: 0.8rem; color: #64748B;">Â© 2024 e-Learning AI Inc. All rights reserved.</p>
                 </div>
             </body>
         </html>
@@ -82,3 +78,4 @@ async def send_password_reset_email(email_to: str, reset_link: str):
         logger.error(f"Failed to send email to {email_to}: {str(e)}")
         # Raise for transparency
         raise e
+

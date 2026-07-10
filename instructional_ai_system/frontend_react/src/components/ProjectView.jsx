@@ -532,10 +532,48 @@ export default function ProjectView({ projectId, onBack }) {
     if (error) return <div className="w-full max-w-7xl mx-auto p-4 flex flex-col items-center justify-center mt-10"><div className="card p-6 text-center w-full max-w-md"><h3 className="text-xl font-bold mb-2" style={{ color: 'var(--danger)' }}>Error</h3><p className="text-muted mb-4">{error}</p><button className="btn btn-outline" onClick={onBack}><ArrowLeft size={16} /> Go back</button></div></div>;
     if (!project) return null;
 
-    const IntakeField = ({ label, field, type = 'text', options }) => {
+    const IntakeField = ({ label, field, type = 'text', options, multiple = false }) => {
         if (!isEditingIntake) return <div><span className="text-muted text-sm block">{label}</span><div className="font-semibold">{intakeObj[field] || 'N/A'}</div></div>;
-        if (options) return <div><label className="form-label">{label}</label><select className="form-control" value={intakeForm[field] || ''} onChange={e => handleIntakeChange(field, e.target.value)}>{options.map(o => <option key={o}>{o}</option>)}</select></div>;
+        if (options) {
+            if (multiple) {
+                return (
+                    <div>
+                        <label className="form-label">{label}</label>
+                        <div className="flex flex-col gap-2 p-2 form-control" style={{ height: 'auto', minHeight: '40px' }}>
+                            {options.map(opt => {
+                                const isChecked = (intakeForm[field] || '').split(', ').includes(opt);
+                                return (
+                                    <label key={opt} className="flex items-center gap-2 text-sm cursor-pointer hover:bg-slate-50 p-1 rounded m-0">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={isChecked}
+                                            onChange={(e) => {
+                                                let current = (intakeForm[field] || '').split(', ').filter(Boolean);
+                                                if (e.target.checked) current.push(opt);
+                                                else current = current.filter(item => item !== opt);
+                                                handleIntakeChange(field, current.join(', '));
+                                            }}
+                                            style={{ accentColor: 'var(--primary)', width: '16px', height: '16px', margin: 0, cursor: 'pointer' }}
+                                        />
+                                        {opt}
+                                    </label>
+                                );
+                            })}
+                        </div>
+                    </div>
+                );
+            }
+            return (
+                <div>
+                    <label className="form-label">{label}</label>
+                    <select className="form-control" value={intakeForm[field] || ''} onChange={e => handleIntakeChange(field, e.target.value)}>
+                        {options.map(o => <option key={o}>{o}</option>)}
+                    </select>
+                </div>
+            );
+        }
         if (type === 'range') return <div><label className="form-label">{label}: {intakeForm[field] || 3}</label><input type="range" className="w-full" min="3" max="12" value={intakeForm[field] || 3} onChange={e => handleIntakeChange(field, e.target.value)} style={{ accentColor: 'var(--primary)' }} /></div>;
+        if (type === 'smallRange') return <div><label className="form-label">{label}: {intakeForm[field] || 3}</label><input type="range" className="w-full" min="1" max="8" value={intakeForm[field] || 3} onChange={e => handleIntakeChange(field, e.target.value)} style={{ accentColor: 'var(--primary)' }} /></div>;
         return <div><label className="form-label">{label}</label><input type="text" className="form-control" value={intakeForm[field] || ''} onChange={e => handleIntakeChange(field, e.target.value)} /></div>;
     };
 
@@ -552,7 +590,7 @@ export default function ProjectView({ projectId, onBack }) {
                     <button className="btn btn-outline" onClick={onBack}><ArrowLeft size={18} /></button>
                     <div>
                         <h2 className="text-xl font-bold m-0">{project.title}</h2>
-                        <span className="text-xs text-muted block mt-1">{project.business_unit} • {project.id.slice(0, 8)}</span>
+                        <span className="text-xs text-muted block mt-1">{project.business_unit || 'Project'}</span>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -593,10 +631,14 @@ export default function ProjectView({ projectId, onBack }) {
                         <IntakeField label="Business Unit" field="business_unit" options={['Sales', 'Operations', 'Claims', 'HR', 'IT', 'Compliance', 'Finance', 'Other']} />
                         <IntakeField label="Course Type" field="course_type" options={['Regulatory / Compliance', 'Product Training', 'Process Training', 'Soft Skills', 'Systems Training', 'Technical Training', 'Other']} />
                         <IntakeField label="Target Audience" field="target_audience" />
-                        <IntakeField label="Experience Level" field="experience_level" options={['New to role', '0-2 years', '2-5 years', '5+ years']} />
-                        <IntakeField label="Geographic Spread" field="geographic_spread" />
+                        <IntakeField label="Experience Level" field="experience_level" multiple={true} options={['Fresher', '1-2 years', '2-5 years', '5+ years']} />
+                        <IntakeField label="Geographic Spread" field="geographic_spread" options={['Global', 'North America', 'United States', 'United Kingdom', 'Europe', 'Asia Pacific', 'Middle East and Africa', 'Latin America', 'Diverse / Multi-region']} />
                         <IntakeField label="Interactivity Level" field="interactivity_level" options={['Level 1 - Basic Click-through', 'Level 2 - Moderate Interaction', 'Level 3 - High Interactivity', 'Level 4 - Simulation / Game-based']} />
                         <IntakeField label="Number of Modules" field="num_modules" type="range" />
+                        <IntakeField label="Language Preference" field="language_preference" options={['American English', 'British English']} />
+                        <IntakeField label="Knowledge Check Difficulty" field="knowledge_check_difficulty" options={['Mixed', 'Easy', 'Medium', 'Hard']} />
+                        <IntakeField label="Knowledge Check Questions" field="knowledge_check_count" type="smallRange" />
+                        <IntakeField label="Knowledge Check Types" field="knowledge_check_types" />
                         <div>
                             <span className="text-muted text-sm block">Objectives</span>
                             {isEditingIntake ? (
@@ -612,6 +654,10 @@ export default function ProjectView({ projectId, onBack }) {
                                     {intakeObj.objective_3 && <div>• {intakeObj.objective_3}</div>}
                                 </div>
                             )}
+                        </div>
+                        <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                            <IntakeField label="Style Guide" field="style_guide" />
+                            <IntakeField label="Guidelines / Spelling Check Notes" field="guidelines" />
                         </div>
                     </div>
                     {pendingEdit && (
