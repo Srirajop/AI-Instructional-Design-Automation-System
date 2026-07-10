@@ -55,7 +55,7 @@ const DiffViewer = ({ oldText, newText, cleanMarkdown }) => {
     const cleaner = typeof cleanMarkdown === 'function' ? cleanMarkdown : (t) => t;
 
     return (
-        <div className="markdown-preview" style={{ padding: 0, background: '#FAFBFF', position: 'relative', border: '1px solid var(--border)', borderRadius: '0 0 var(--radius-sm) var(--radius-sm)' }}>
+        <div className="" style={{ padding: 0, background: '#FAFBFF', position: 'relative', border: '1px solid var(--border)', borderRadius: '0 0 var(--radius-sm) var(--radius-sm)' }}>
             {/* Sticky Header */}
             <div className="sticky top-0 z-10 p-4 bg-blue-50 border-b border-blue-100 text-blue-700 text-sm font-medium shadow-sm flex items-center gap-2">
                 <ShieldCheck size={18} />
@@ -88,6 +88,58 @@ const DiffViewer = ({ oldText, newText, cleanMarkdown }) => {
                     text-decoration: line-through !important; 
                     font-weight: 700 !important;
                     opacity: 0.9;
+                }
+                .rendered-diff-content table{
+                    width:100%;
+                    border-collapse:collapse;
+                    table-layout:fixed;
+                    margin:20px 0;
+                }
+                .rendered-diff-content th,
+                .rendered-diff-content td{
+                    border:1px solid #d9d9d9;
+                    padding:12px;
+                    vertical-align:top;
+                    text-align:left;
+                    word-break:break-word;
+                    overflow-wrap:anywhere;
+                }
+                .rendered-diff-content th{
+                    background:#f7f7f7;
+                    font-weight:600;
+                }
+                .rendered-diff-content tr:nth-child(even){
+                    background:#fcfcfc;
+                }
+                .rendered-diff-content table th:nth-child(1),
+                .rendered-diff-content table td:nth-child(1){
+                    width:12%;
+                }
+                .rendered-diff-content table th:nth-child(2),
+                .rendered-diff-content table td:nth-child(2){
+                    width:10%;
+                }
+
+                .rendered-diff-content table th:nth-child(3),
+                .rendered-diff-content table td:nth-child(3){
+                    width:18%;
+                }
+
+                .rendered-diff-content table th:nth-child(4),
+                .rendered-diff-content table td:nth-child(4){
+                    width:18%;
+                }
+                .rendered-diff-content table th:nth-child(5),
+                .rendered-diff-content table td:nth-child(5){
+                    width:22%;
+                }
+                .rendered-diff-content table th:nth-child(6),
+                .rendered-diff-content table td:nth-child(6){
+                    width:12%;
+                }
+                .rendered-diff-content table th:nth-child(7),
+                .rendered-diff-content table td:nth-child(7){
+                 width:8%;
                 }
             `}</style>
         </div>
@@ -216,7 +268,7 @@ export default function ProjectView({ projectId, onBack }) {
                     const table = node.closest('table');
                     const ths = table.querySelectorAll('thead th');
                     const colName = ths[colIndex]?.textContent.trim() || '';
-                    
+
                     setSelectionContext({ text, screenNum: targetID, colIndex, colName, rect });
                 }
             }
@@ -275,15 +327,49 @@ export default function ProjectView({ projectId, onBack }) {
 
     // Clean markdown
     const cleanMarkdown = useCallback((text) => {
-        return (text || '')
+        console.log("===== BEFORE CLEAN =====");
+        console.log(text);
+        // Step 1: standard artifact-wrapper cleanup
+        const cleaned = (text || "")
             .replace(/<br>/g, '<br/>')
-            .replace(/^[=]{5,}$/gm, '')
+            .replace(/^=[=]{5,}$/gm, '')
             .replace(/^[-]{5,}$/gm, '')
             .replace(/---\s*START OF DOCUMENT\s*---/gi, '')
             .replace(/---\s*END OF DOCUMENT\s*---/gi, '')
             .replace(/\s*\[START CONTENT\]\s*/gi, '')
             .replace(/\s*\[END CONTENT\]\s*/gi, '')
-            .replace(/\n{5,}/g, '\n\n\n');
+            .replace(/\n{5,}/g, '\n\n');
+
+        // Step 2: collapse split table rows.
+        // marked.parse (GFM) terminates the current table block the moment it
+        // encounters a line that does not start with '|'. When the LLM splits a
+        // long cell across multiple physical lines, every continuation line
+        // (no leading '|') causes the parser to close the table after the
+        // preceding row, rendering Module 2, 3, … as plain text outside the
+        // table. Fix: any non-pipe continuation line that immediately follows a
+        // table row is appended to that row with a <br/> instead of a newline.
+        const lines = cleaned.split('\n');
+        const joined = [];
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const trimmed = line.trim();
+            const prevRow = joined.length > 0 ? joined[joined.length - 1].trim() : '';
+            const prevIsTableRow = prevRow.startsWith('|');
+            const currIsTableRow = trimmed.startsWith('|');
+            const currIsEmpty = trimmed === '';
+            const currIsHeading = trimmed.startsWith('#');
+
+            if (prevIsTableRow && !currIsTableRow && !currIsEmpty && !currIsHeading) {
+                // Continuation of a split cell — attach to the previous row
+                joined[joined.length - 1] = joined[joined.length - 1].trimEnd() + '<br/>' + trimmed;
+            } else {
+                joined.push(line);
+            }
+        }
+        console.log("===== AFTER CLEAN =====");
+        console.log(joined.join('\n'));
+
+        return joined.join('\n');
     }, []);
 
     const startEditingIntake = () => { setIntakeForm({ ...intakeObj }); setIsEditingIntake(true); };
@@ -333,6 +419,8 @@ export default function ProjectView({ projectId, onBack }) {
     const saveDdEdit = () => {
         if (ddEditorRef.current) {
             const html = ddEditorRef.current.innerHTML;
+            console.log("===== GENERATED HTML =====");
+            console.log(html);
             setDdDisplayHtml(html);
             const md = turndown.turndown(html);
             setDdContent(md);
@@ -531,6 +619,15 @@ export default function ProjectView({ projectId, onBack }) {
     if (loading) return <div className="flex items-center justify-center min-h-screen"><Loader size={32} className="spinner" style={{ color: 'var(--primary)', animation: 'spin 1s linear infinite' }} /></div>;
     if (error) return <div className="w-full max-w-7xl mx-auto p-4 flex flex-col items-center justify-center mt-10"><div className="card p-6 text-center w-full max-w-md"><h3 className="text-xl font-bold mb-2" style={{ color: 'var(--danger)' }}>Error</h3><p className="text-muted mb-4">{error}</p><button className="btn btn-outline" onClick={onBack}><ArrowLeft size={16} /> Go back</button></div></div>;
     if (!project) return null;
+
+    if (!project) return null;
+
+    // TEMPORARY DEBUG
+    console.log("Storyboard Content:");
+    console.log(sbContent);
+
+
+
 
     const IntakeField = ({ label, field, type = 'text', options }) => {
         if (!isEditingIntake) return <div><span className="text-muted text-sm block">{label}</span><div className="font-semibold">{intakeObj[field] || 'N/A'}</div></div>;

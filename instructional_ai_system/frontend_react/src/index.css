@@ -4,8 +4,8 @@
 @theme {
   --font-geist: "Geist", sans-serif;
   --font-instrument: "Instrument Serif", serif;
-  --shadow-cta: inset -4px -6px 25px 0px rgba(201,201,201,0.08), inset 4px 4px 10px 0px rgba(29,29,29,0.24);
-  --shadow-input: 0px 10px 40px 5px rgba(194,194,194,0.25);
+  --shadow-cta: inset -4px -6px 25px 0px rgba(201, 201, 201, 0.08), inset 4px 4px 10px 0px rgba(29, 29, 29, 0.24);
+  --shadow-input: 0px 10px 40px 5px rgba(194, 194, 194, 0.25);
 }
 
 
@@ -60,7 +60,7 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: 
+  background:
     radial-gradient(circle at 75% 15%, rgba(147, 71, 255, 0.15) 0%, transparent 40%),
     radial-gradient(circle at 25% 85%, rgba(255, 100, 255, 0.1) 0%, transparent 40%),
     radial-gradient(circle at 50% 50%, rgba(100, 150, 255, 0.08) 0%, transparent 50%);
@@ -78,8 +78,13 @@
 }
 
 @keyframes bg-pulse {
-  from { transform: translate(0, 0) scale(1); }
-  to { transform: translate(5%, 5%) scale(1.1); }
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+
+  to {
+    transform: translate(5%, 5%) scale(1.1);
+  }
 }
 
 .auth-split-container {
@@ -97,10 +102,10 @@
   overflow: hidden;
   /* Abstract gradient matching the mockup */
   background: radial-gradient(circle at 0% 100%, #3b28cc 0%, transparent 50%),
-              radial-gradient(circle at 10% 80%, #6842ff 0%, transparent 50%),
-              radial-gradient(circle at 80% 50%, #fca5f1 0%, transparent 60%),
-              radial-gradient(circle at 30% 20%, #e2eeff 0%, transparent 50%),
-              #ffffff;
+    radial-gradient(circle at 10% 80%, #6842ff 0%, transparent 50%),
+    radial-gradient(circle at 80% 50%, #fca5f1 0%, transparent 60%),
+    radial-gradient(circle at 30% 20%, #e2eeff 0%, transparent 50%),
+    #ffffff;
   align-items: center;
   justify-content: center;
   padding: 3rem;
@@ -129,9 +134,9 @@
   position: absolute;
   inset: 0;
   opacity: 0.15;
-  background-image: 
-    radial-gradient(circle at 60% 70%, transparent 30%, rgba(255,255,255,0.4) 31%, transparent 32%),
-    radial-gradient(circle at 60% 70%, transparent 50%, rgba(255,255,255,0.2) 51%, transparent 52%);
+  background-image:
+    radial-gradient(circle at 60% 70%, transparent 30%, rgba(255, 255, 255, 0.4) 31%, transparent 32%),
+    radial-gradient(circle at 60% 70%, transparent 50%, rgba(255, 255, 255, 0.2) 51%, transparent 52%);
   background-size: 200% 200%;
   background-position: center;
 }
@@ -311,8 +316,14 @@ body {
 
 /* 1. Shiny Sweep Button Effect */
 @keyframes shinySweep {
-  0% { transform: translateX(-100%) skewX(-15deg); }
-  50%, 100% { transform: translateX(200%) skewX(-15deg); }
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+
+  50%,
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+  }
 }
 
 .animate-shiny {
@@ -327,20 +338,25 @@ body {
   left: 0;
   width: 50%;
   height: 100%;
-  background: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.4) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: linear-gradient(to right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0) 100%);
   transform: translateX(-100%) skewX(-15deg);
   animation: shinySweep 3s cubic-bezier(0.19, 1, 0.22, 1) infinite;
 }
 
 /* 2. Floating Effect */
 @keyframes floatGentle {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .animate-float {
@@ -349,10 +365,21 @@ body {
 
 /* 3. Morphing Video-Like Background */
 @keyframes morphBg {
-  0% { transform: scale(1) translate(0, 0); }
-  33% { transform: scale(1.05) translate(2%, 2%); }
-  66% { transform: scale(1.02) translate(-2%, 1%); }
-  100% { transform: scale(1) translate(0, 0); }
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+
+  33% {
+    transform: scale(1.05) translate(2%, 2%);
+  }
+
+  66% {
+    transform: scale(1.02) translate(-2%, 1%);
+  }
+
+  100% {
+    transform: scale(1) translate(0, 0);
+  }
 }
 
 .animate-morph-bg {
@@ -367,18 +394,37 @@ body {
   position: absolute;
   inset: -10%;
   z-index: -1;
-  background: inherit; /* Copies the parent's radial gradient */
+  background: inherit;
+  /* Copies the parent's radial gradient */
   animation: morphBg 15s ease-in-out infinite alternate;
   transform-origin: center;
 }
 
 /* 4. Staggered Entrance (Expanded) */
-.stagger-enter { opacity: 0; transform: translateY(20px); }
-.stagger-1 { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; }
-.stagger-2 { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; }
-.stagger-3 { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; }
-.stagger-4 { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards; }
-.stagger-5 { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards; }
+.stagger-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.stagger-1 {
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+
+.stagger-2 {
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+}
+
+.stagger-3 {
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+
+.stagger-4 {
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+}
+
+.stagger-5 {
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+}
 
 
 /* ═══════════════════════════════════════════════════════════
@@ -835,7 +881,7 @@ h6 {
 .markdown-preview table {
   width: 100%;
   min-width: 900px;
-  border-collapse: separate;
+  border-collapse: collapse;
   border-spacing: 0;
   margin: 1.5rem 0;
   font-size: 0.85rem;
@@ -844,6 +890,31 @@ h6 {
   overflow: hidden;
   box-shadow: var(--shadow);
   border: 1px solid var(--border-light);
+}
+
+.markdown-preview table {
+  table-layout: fixed;
+}
+
+.markdown-preview table th:nth-child(1),
+.markdown-preview table td:nth-child(1) {
+  width: 22%;
+}
+
+.markdown-preview table th:nth-child(2),
+.markdown-preview table td:nth-child(2) {
+  width: 38%;
+}
+
+.markdown-preview table th:nth-child(3),
+.markdown-preview table td:nth-child(3) {
+  width: 40%;
+}
+
+.markdown-preview td,
+.markdown-preview th {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .markdown-preview th {

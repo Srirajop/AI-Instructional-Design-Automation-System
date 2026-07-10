@@ -164,33 +164,75 @@ CRITICAL INSTRUCTIONS FOR GENERATION:
     *   **NEVER start Strategies with**: "This module will...", "In this module...", "Learners will...". **Start with the action** (e.g., "A simulation explores...", "Case studies highlight...", "Interactive scenarios guided the learner...").
 3.  **VARIETY**: Every module MUST sound different. Do not repeat sentence structures.
 4.  **ALIGNMENT**: Ensure "Recommended Strategy" and "Activities/Assessment" align with the specific Learning Objectives and ID Principles provided.
+IMPORTANT TABLE RULES:
+- Generate ONE GitHub-Flavored Markdown table.
 
+Every row must
+
+- begin with |
+
+- end with |
+
+- contain exactly seven columns
+
+Do not insert blank lines inside the table.
+
+Do not insert headings inside the table.
+- Each module must occupy exactly ONE table row.
+
+
+- Separate multiple objectives using <br>.
+
+-Never create physical newlines inside a table cell.
+
+-Use only <br>.
+
+Every module must occupy exactly one Markdown row.
+- Continue the table until all modules are completed.
 | Module | Delivery Mode | Learning Objectives | Topics | Recommended Strategy | Activities/Assessment | Duration |
 |--------|---------------|---------------------|--------|----------------------|-----------------------|----------|
-| Module 1: [Title] | Self-paced eLearning | • [Strong Verb] [Objective 1 - Detailed]<br>• [Strong Verb] [Objective 2 - Detailed]<br>• [Strong Verb] [Objective 3 - Detailed]<br>• [Strong Verb] [Objective 4 - Detailed] | • [Main Topic 1]<br>&nbsp;&nbsp;- [Sub-point 1]<br>&nbsp;&nbsp;- [Sub-point 2]<br>• [Main Topic 2]<br>&nbsp;&nbsp;- [Sub-point 1]<br>&nbsp;&nbsp;- [Sub-point 2]<br>• [Main Topic 3] | [EXTREMELY DETAILED strategy. Write 4-6 full sentences. Start with an action or description, NOT "Learners will". Tell a story of the learning experience.] | • [Specific Activity aligned to objectives]<br>• [Quiz details] | [Time] |
-| Module 2: [Title] | Self-paced eLearning | • [Strong Verb] [Objective 1]<br>• [Strong Verb] [Objective 2]<br>• [Strong Verb] [Objective 3]<br>• [Strong Verb] [Objective 4] | • [Main Topic 1]<br>• [Main Topic 2 with detail breakdown]<br>• [Main Topic 3] | [EXTREMELY DETAILED strategy. Different opening style than Module 1. "A branching scenario allows..."] | • [Activity]<br>• [Quiz] | [Time] |
+| Module 1: [Title] | Self-paced eLearning | [Strong Verb] Objective 1; [Strong Verb] Objective 2; [Strong Verb] Objective 3; [Strong Verb] Objective 4 | Main Topic 1 (Sub-point 1, Sub-point 2); Main Topic 2 (Sub-point 1, Sub-point 2); Main Topic 3 | Write a detailed learning strategy in 2–3 concise sentences describing how learners will engage with the content. Begin with an instructional action, not "Learners will". | Activity aligned with objectives; Knowledge check quiz | [Time] |
 | ... [GENERATE EXACTLY {intake_data.get('num_modules', '3')} MODULES TOTAL] ... |
 | Knowledge Check | Self-paced eLearning | • Assess understanding | MCQs; Scenario-based questions | Quiz Format | Multiple-choice quiz | 30 min |
 | Summary & Conclusion | Self-paced eLearning | • Review key concepts | Summary & Key takeaways | Recap points | Certificate of Completion | 15 min |
 
-5. INSTRUCTIONAL STRATEGY
-   - Pedagogy: [Approach based on {intake_data.get('interactivity_level', '')}]
-   - Interactivity: [Specific interactive elements from REQUIRED INTERACTIVITY TYPES]
-   - Media: [Specific visual strategies from REQUIRED VISUAL STRATEGIES]
+IMPORTANT:
 
-6. ASSESSMENT STRATEGY
-   - Formative: [Knowledge checks details]
-   - Summative: [Final assessment details]
-   - Criteria: [Pass/fail criteria]
-7. KNOWLEDGE CHECK
+Every major section MUST begin with a Markdown heading.
 
-Generate the Knowledge Check using EXACTLY the following format.
+Example:
+
+## 5. INSTRUCTIONAL STRATEGY
+
+## 6. ASSESSMENT STRATEGY
+
+## 7. KNOWLEDGE CHECK
+
+## 8. TECHNICAL SPECIFICATIONS
+
+Do NOT use <br> tags between sections.
+Do NOT continue a previous paragraph into a new section.
+Leave one blank line before every heading.
+## 5. INSTRUCTIONAL STRATEGY
+
+- Pedagogy:
+- Interactivity:
+- Media:
+
+## 6. ASSESSMENT STRATEGY
+
+- Formative:
+- Summative:
+- Criteria:
+
+## 7. KNOWLEDGE CHECK
+
 
 Do NOT write the questions in paragraph form.
 Each option must appear on its own line.
 Leave one blank line between questions.
 
-7. KNOWLEDGE CHECK
+
 
 Generate a Knowledge Check after the Assessment Strategy using the following structure.
 
@@ -212,6 +254,29 @@ Formatting Rules:
 - Each option must appear on a separate line.
 - Leave one blank line between questions.
 - Include at least one question for every module.
+Formatting Requirements:
+
+- Use headings:
+  ## KNOWLEDGE CHECK
+  ### Module X
+
+- Every question must include:
+  Question Type
+  Question
+  Correct Answer
+  Explanation
+
+- For MCQs, each option must appear on its own line.
+
+- Leave one blank line between questions.
+
+Do not compress questions into paragraphs.
+
+Each label (Question Type, Question, Options, Correct Answer, Explanation) must appear on its own line.
+
+Each answer option must appear on a separate line.
+
+Do not omit headings such as "### Module X".
 Generate exactly {question_count} assessment questions based on the course content.
 
 Distribute the assessment types intelligently across all modules while maintaining a balanced mix.
@@ -323,7 +388,7 @@ Before returning the Knowledge Check, verify that:
 - Every answer is supported by the uploaded source material.
 - No placeholder text remains anywhere in the output.
 
-8. TECHNICAL SPECIFICATIONS
+## 8. TECHNICAL SPECIFICATIONS
    - LMS: SCORM 1.2
    - Devices: Desktop/Laptop, Tablet
 
@@ -351,7 +416,7 @@ Generate the complete Design Document now:"""
             max_tokens=2000,
         )
         result = chat_completion.choices[0].message.content
-        return result
+        return fix_markdown_tables(result)
             
     except Exception as e:
         # Increase visibility of errors
@@ -372,11 +437,26 @@ DESIGN DOCUMENT:
 MODULE KNOWLEDGE CHECK:
 {module_knowledge_check}
 
-SOURCE CONTENT:
+SOURCE CONTENT (REFERENCE ONLY)
+
+---------------- START SOURCE ----------------
+
 {content[:2000]}
 
+---------------- END SOURCE ----------------
+IMPORTANT:
+
+Use the SOURCE CONTENT only as reference material.
+
+Do NOT copy paragraphs.
+
+Do NOT summarize the source.
+
+Do NOT reproduce the source document.
+
+
 RULES:
-- OST: Actual text learner reads. Real facts, definitions, bullet points. NEVER "The narrator explains..."
+- OST: Actual text learner reads. Real facts and concise learner-facing statements separated with <br>. NEVER "The narrator explains..."
 - AUDIO: Actual narrator script. Conversational, professional, 5-8 sentences. End with "Click Next to continue." NEVER "The narrator says..."
 - VISUAL: Specific designer directions. Name images ("Show static image of X"), describe animations, layout, navigation.
 - No placeholders. No AI buzzwords. Content from source only.
@@ -406,32 +486,92 @@ KNOWLEDGE CHECK REQUIREMENTS:
 - The Knowledge Check must always be the FINAL screen of Module {module_num}.
 
 - If no Module Knowledge Check is provided, skip the Knowledge Check screen and generate only the instructional screens.
+- The Knowledge Check must be represented as ONE table row.
 
+- Do not create a separate section.
+
+- Do not leave the table.
 FORMAT:
 
-=============================================================================
-Module {module_num}: [Title from Design Doc]
-=============================================================================
+Return ONE valid GitHub-Flavored Markdown table.
 
-Screen {module_num}.1 Title: [Descriptive Title]
+The table MUST contain EXACTLY these four columns.
 
-| ON-SCREEN TEXT (OST) | AUDIO NARRATION | VISUAL INSTRUCTIONS & DEVELOPER NOTES |
-| :--- | :--- | :--- |
-| [Actual text with bullets] | [Actual narration script] | [Specific graphic directions] |
-Generate 5-8 instructional screens followed by ONE Knowledge Check screen for Module {module_num}.
+| Screen | ON-SCREEN TEXT (OST) | AUDIO NARRATION | VISUAL INSTRUCTIONS & DEVELOPER NOTES |
+|--------|-----------------------|-----------------|---------------------------------------|
+| Screen {module_num}.1 - Introduction | Welcome to this module.<br>Topic 1<br>Topic 2 | Welcome to this module. In this lesson you will learn the key concepts. Click Next to continue. | Show title banner, relevant icon and fade-in animation. |
+| Screen {module_num}.2 - Main Concept |Explain the concept using concise learner-facing text.<br>Additional learner-facing point. | Explain the concept conversationally. End with "Click Next to continue." | Show infographic and highlight important elements. |
 
-The Knowledge Check screen must always be the FINAL screen of the module.
+Continue using EXACTLY the same table structure.
 
-Return only the storyboard in the specified format."""
+Rules:
+
+- Every screen must be one table row.
+- The Screen column must contain the screen title.
+- Never output standalone headings such as:
+  - Module {module_num}
+  - Screen {module_num}.1 Title
+- Every row must begin with |
+- Every row must end with |
+- Never insert blank lines inside the table.
+- Use <br> for line breaks inside cells.
+- The final row must be the Knowledge Check.
+CRITICAL OUTPUT RULES
+
+- Return ONLY one Markdown table.
+- Do not output any headings outside the table.
+- Do not output Module titles outside the table.
+- Do not output Screen titles outside the table.
+- Every row must start with "|" and end with "|".
+- Every row must contain exactly four columns.
+- Never merge two screens into one row.
+
+- Never split one screen into multiple rows.
+- Use <br> for line breaks inside cells.
+- Never insert blank lines inside the table.
+- Stop immediately after the Knowledge Check row.
+CRITICAL:
+The Knowledge Check table must use exactly the same number of columns as every other storyboard row.
+
+Every Knowledge Check row must begin and end with the "|" character.
+
+Do not output standalone lines such as
+"Visual Instructions:"
+or
+"Audio Narration:"
+
+Everything must remain inside Markdown table cells.
+Do not close the table until the final Knowledge Check row has been completed."""
 
     r = client.chat.completions.create(
         messages=[
-            {"role": "system", "content": "You are a senior eLearning Storyboard Developer. Write production-ready storyboards in the English variant requested by the user. OST = real learner text. Audio = actual narrator script. Visual = specific graphic designer directions. No AI slop. CRITICAL: Every table row MUST be ONE PHYSICAL LINE. Use <br> for all internal line breaks."},
+            {"role": "system", "content": """You are a senior eLearning Storyboard Developer.
+
+Always return valid GitHub-Flavored Markdown.
+
+Every response must be exactly one Markdown table.
+
+Never output standalone headings.
+
+Never output Module titles outside the table.
+
+Never output Screen titles outside the table.
+
+Every row begins with "|" and ends with "|".
+
+Never omit the Markdown separator row immediately after the table header.
+
+Use <br> inside table cells.
+
+Do not use Markdown bullet lists inside table cells.
+
+Do not leave the table until the Knowledge Check row is complete.
+"""},
             {"role": "user", "content": prompt}
         ],
         model="llama-3.1-8b-instant",
-        temperature=0.7,
-        max_tokens=2000,
+        temperature=0.2,
+        max_tokens=3500,
     )
     return r.choices[0].message.content
 
@@ -450,13 +590,30 @@ DESIGN DOCUMENT:
 MODULE KNOWLEDGE CHECK:
 {module_knowledge_check}
 
-SOURCE CONTENT:
+SOURCE CONTENT (REFERENCE ONLY)
+
+---------------- START SOURCE ----------------
+
 {content[:2000]}
+
+---------------- END SOURCE ----------------
+IMPORTANT:
+
+Use the SOURCE CONTENT only as reference material.
+
+Do NOT copy paragraphs.
+
+Do NOT summarize the source.
+
+Do NOT reproduce the source document.
+
+
+
 RULES:
 - SECTION: Descriptive names (Introduction, Core Concepts, Activity, Quiz, Summary).
-- TOPICS: Specific objectives and sub-topics from source.
+- TOPICS: Specific objectives and concise learner-facing statements separated using <br>.
 - VISUAL: Specific directions ("Show static image of X", animations, layouts, facilitator videos).
-- OST: Actual learner-facing text with bullets. Real definitions, facts. NEVER meta-descriptions.
+- OST: Actual learner-facing text. Present concise facts and definitions separated with <br>. NEVER meta-descriptions.
 - AUDIO: Actual narrator script. Conversational, professional. NEVER "The narrator explains". Include cues like "Show image #1>>". End with "Click Next to continue."
 - STATUS: "Draft".
 - ACTIONS: Production notes ("Slide design required", "Animation needed").
@@ -486,27 +643,89 @@ KNOWLEDGE CHECK REQUIREMENTS:
 
 - If no Module Knowledge Check is provided, skip the Knowledge Check screen and generate only the instructional screens.
 
+
+
 FORMAT:
 
-MODULE {module_num}: [Title from Design Doc]
+Return ONE valid GitHub-Flavored Markdown table.
 
-| Section | Topics | Visual Instructions/Developer Notes | On-screen text | Audio Narration | Status | Actions required |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| [Name] | [Topics] | [Visual directions] | [Actual OST] | [Actual script] | Draft | [Actions] |
-Generate 5-8 instructional rows followed by ONE Knowledge Check row for Module {module_num}.
+The table MUST contain EXACTLY these seven columns.
 
-The Knowledge Check must always be the FINAL row of the module.
+| Section | Topics | Visual Instructions & Developer Notes | On-Screen Text | Audio Narration | Status | Actions Required |
+|---------|--------|----------------------------------------|----------------|-----------------|--------|------------------|
+| Introduction | Cyber Security Basics<br>Threat Landscape | Show title banner and cyber security icon. | Cyber Security protects systems and information.<br>Threats continue to evolve. | Welcome to this module. Today we will explore cyber security fundamentals. Click Next to continue. | Draft | Create title slide |
+| Core Concepts | Malware<br>Phishing | Show malware infographic. | Malware includes viruses, worms and trojans.<br>Phishing targets users through deception. | Let's understand the most common cyber threats. Click Next to continue. | Draft | Design infographic |
 
-Return only the storyboard in the specified format."""
+Continue using EXACTLY the same table structure.
+
+Rules:
+
+- Every screen must be one table row.
+- Every row begins with "|".
+- Every row ends with "|".
+- Every row contains exactly seven columns.
+- The Markdown separator row (|----|----|...) must appear immediately after the table header.
+- Never merge two screens into one row.
+- Never split one screen into multiple rows.
+- Never insert blank lines inside the table.
+- Use <br> for line breaks inside cells.
+- The Knowledge Check must be the final table row.
+- Do not close the table until the final Knowledge Check row has been completed.
+- The Knowledge Check must remain inside the table.
+
+CRITICAL OUTPUT RULES
+
+- Return ONLY one Markdown table.
+- Do not output any headings outside the table.
+- Every row must begin with "|" and end with "|".
+- Every row must contain exactly seven columns.
+- Never merge two screens into one row.
+- Never split one screen into multiple rows.
+- Never insert blank lines inside the table.
+- Stop immediately after the Knowledge Check row.
+
+CRITICAL:
+The Knowledge Check table must use exactly the same number of columns as every other storyboard row.
+
+Every Knowledge Check row must begin and end with the "|" character.
+
+Do not output standalone lines such as
+"Visual Instructions:"
+or
+"Audio Narration:"
+
+Everything must remain inside Markdown table cells.
+Return nothing except the completed Markdown table."""
 
     r = client.chat.completions.create(
         messages=[
-            {"role": "system", "content": "You are a senior eLearning Storyboard Developer. Write production-ready storyboards in the English variant requested by the user. On-screen text = real learner content. Audio = actual narrator script. Visual = specific developer directions. No AI slop. CRITICAL: Every table row MUST be ONE PHYSICAL LINE. Use <br> for all internal line breaks."},
+            {"role": "system", "content": """You are a senior eLearning Storyboard Developer.
+
+Always return valid GitHub-Flavored Markdown.
+
+Every response must be exactly one Markdown table.
+
+Never output standalone headings.
+
+Never output Module titles outside the table.
+
+Never output Screen titles outside the table.
+
+Every row begins with "|" and ends with "|".
+
+Never omit the Markdown separator row immediately after the table header.
+
+Use <br> inside table cells.
+
+Do not use Markdown bullet lists inside table cells.
+
+Do not leave the table until the Knowledge Check row is complete.
+"""},
             {"role": "user", "content": prompt}
         ],
         model="llama-3.1-8b-instant",
-        temperature=0.7,
-        max_tokens=2000,
+        temperature=0.2,
+        max_tokens=3500,
     )
     return r.choices[0].message.content
 
@@ -580,9 +799,22 @@ def generate_storyboard(api_key: str, design_doc: str, intake_data: Dict, conten
 
         for i in range(1, num_modules + 1):
             module_content = _call_module_with_retry(
-                generate_fn, client, i, num_modules, design_doc, intake_data, content, strategies
+                generate_fn,
+                client,
+                i,
+                num_modules,
+                design_doc,
+                intake_data,
+                content,
+                strategies
             )
-            module_content = fix_markdown_tables(module_content)
+
+            print("\n" + "=" * 80)
+            print(f"MODULE {i} RAW OUTPUT")
+            print("=" * 80)
+            print(module_content)
+            print("=" * 80 + "\n")
+
             all_modules.append(module_content)
             # Rate limit delay between modules (Groq free tier)
             # 20s gap prevents TPM (tokens per minute) limit errors with larger outputs
@@ -593,7 +825,7 @@ def generate_storyboard(api_key: str, design_doc: str, intake_data: Dict, conten
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating Storyboard: {str(e)}")
 
-def fix_markdown_tables(text: str) -> str:
+def fix_markdown_tables(text: str):
     """Post-process AI output to fix common markdown table formatting issues.
     
     Fixes:
@@ -654,13 +886,20 @@ def fix_markdown_tables(text: str) -> str:
 
         # Logic: If a line has 2+ pipes, it's a row.
         # If the next few lines are "loose" (0 pipes or 1 pipe), they belong to this row.
-        if pipe_count >= 2:
+        # Valid storyboard rows always contain several pipes.
+        # Ignore short accidental pipe usage inside text.
+        if pipe_count >= 4:
             # Ensure it starts and ends with pipes.
             if not stripped.startswith('|'): stripped = '| ' + stripped
             if not stripped.endswith('|'): stripped = stripped + ' |'
             
             # Extract cells
             current_cells = [c.strip() for c in stripped[1:-1].split('|')]
+            # Keep storyboard tables structurally consistent.
+            # Type 1 = 3 columns
+            # Type 2 = 7 columns
+            if len(current_cells) < 3:
+                current_cells.extend([""] * (3 - len(current_cells)))
             
             j = i + 1
             while j < len(pass1):
@@ -685,17 +924,24 @@ def fix_markdown_tables(text: str) -> str:
                 # Merge into the last non-empty cell (usually Actions/Visuals or OST)
                 for idx in range(len(current_cells)-1, -1, -1):
                     if current_cells[idx] or idx == 0:
-                        current_cells[idx] += '<br>' + next_stripped
+                        # Prevent duplicate breaks.
+                        if current_cells[idx]:
+                            current_cells[idx] += "<br>" + next_stripped
+                        else:
+                            current_cells[idx] = next_stripped
                         break
                 j += 1
             
-            final.append('| ' + ' | '.join(current_cells) + ' |')
+            # Rebuild the markdown row cleanly.
+            rebuilt_row = "| " + " | ".join(cell.strip() for cell in current_cells) + " |"
+            final.append(rebuilt_row)
             i = j
         else:
             final.append(line)
             i += 1
             
     return '\n'.join(final)
+    
 
 
 @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=2, min=4, max=30), reraise=True)
