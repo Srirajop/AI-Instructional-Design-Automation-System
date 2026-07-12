@@ -103,7 +103,34 @@ Learning Objectives:
 Interactivity Level: {intake_data.get('interactivity_level', '')}
 Output Required: {intake_data.get('output_required', '')}
 """
+def get_language_rules(intake_data: Dict) -> str:
+    preference = intake_data.get('language_preference', 'American English')
+    if 'British' in preference:
+        return "Use British English spelling and phrasing consistently, such as organise, behaviour, programme, and centre where appropriate."
+    return "Use American English spelling and phrasing consistently, such as organize, behavior, program, and center where appropriate."
 
+
+def get_quality_rules(intake_data: Dict) -> str:
+    return f"""
+LANGUAGE AND STYLE:
+- {get_language_rules(intake_data)}
+- Follow this style guide: {intake_data.get('style_guide', 'Clear, professional, concise instructional design language.')}
+- Apply these project guidelines: {intake_data.get('guidelines', 'Use plain language, correct spelling, and a consistent instructional tone.')}
+- Run a spelling and grammar pass before finalizing. Do not output shuffled phrases, sentence fragments, or out-of-sequence content.
+- Keep each paragraph logically ordered: concept, example, learner action, then feedback or takeaway.
+"""
+
+
+def get_knowledge_check_rules(intake_data: Dict) -> str:
+    return f"""
+KNOWLEDGE CHECK REQUIREMENTS:
+- Add a dedicated Knowledge Check immediately after EACH content module, including after Module 1.
+- Use {intake_data.get('knowledge_check_count', '3')} question(s) per module.
+- Difficulty: {intake_data.get('knowledge_check_difficulty', 'Mixed')}.
+- Allowed types: {intake_data.get('knowledge_check_types', 'Multiple Choice, True/False, Fill in the Blank, Scenario-Based')}.
+- Each knowledge check must align to that module's objectives and include the correct answer plus feedback.
+- Use varied assessment types across modules when multiple types are selected.
+"""
 @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=2, min=4, max=30), reraise=True)
 def generate_design_document(api_key: str, intake_data: Dict, content: str) -> str:
     """Generate Design Document using Groq Llama 3.1 8B Instant."""
@@ -132,7 +159,7 @@ REQUIRED ASSESSMENT TYPES:
 {get_knowledge_check_rules(intake_data)}
 {get_quality_rules(intake_data)}
 SOURCE CONTENT:
-{content[:4000]}
+{content[:2500]}
 
 TASK:
 Create a DETAILED Design Document following this EXACT structure.
@@ -415,7 +442,7 @@ def _generate_single_module_type1(client, module_num: int, total_modules: int, d
     prompt = f"""Generate storyboard for MODULE {module_num} ONLY (of {total_modules}).
 
 DESIGN DOCUMENT:
-{design_doc[:3000]}
+{design_doc[:2800]}
 
 MODULE KNOWLEDGE CHECK:
 {module_knowledge_check}
@@ -467,7 +494,7 @@ KNOWLEDGE CHECK REQUIREMENTS:
     - Visual instructions describing interactive answer buttons and immediate learner feedback.
 
 - The Knowledge Check must always be the FINAL screen of Module {module_num}.
-
+- The Knowledge Check Screen value MUST begin with "Module {module_num} - Screen {module_num}." and end with " - Knowledge Check".
 - If no Module Knowledge Check is provided, skip the Knowledge Check screen and generate only the instructional screens.
 - The Knowledge Check must be represented as ONE table row.
 
@@ -482,15 +509,18 @@ The table MUST contain EXACTLY these four columns.
 
 | Screen | ON-SCREEN TEXT (OST) | AUDIO NARRATION | VISUAL INSTRUCTIONS & DEVELOPER NOTES |
 |--------|-----------------------|-----------------|---------------------------------------|
-| Screen {module_num}.1 - Introduction | Welcome to this module.<br>Topic 1<br>Topic 2 | Welcome to this module. In this lesson you will learn the key concepts. Click Next to continue. | Show title banner, relevant icon and fade-in animation. |
-| Screen {module_num}.2 - Main Concept |Explain the concept using concise learner-facing text.<br>Additional learner-facing point. | Explain the concept conversationally. End with "Click Next to continue." | Show infographic and highlight important elements. |
+| Module {module_num} - Screen {module_num}.1 - Introduction | Welcome to this module.<br>Topic 1<br>Topic 2 | Welcome to this module. In this lesson you will learn the key concepts. Click Next to continue. | Show title banner, relevant icon and fade-in animation. |
+| Module {module_num} - Screen {module_num}.2 - Main Concept | Explain the concept using concise learner-facing text.<br>Additional learner-facing point. | Explain the concept conversationally. End with "Click Next to continue." | Show infographic and highlight important elements. |
 
 Continue using EXACTLY the same table structure.
 
 Rules:
 
 - Every screen must be one table row.
-- The Screen column must contain the screen title.
+- The Screen column must contain the module number, screen number, and screen title.
+- Every Screen value MUST begin with "Module {module_num} - Screen {module_num}." followed by the screen number and title.
+- Examples: "Module {module_num} - Screen {module_num}.1 - Introduction" and "Module {module_num} - Screen {module_num}.2 - Main Concept".
+- Never omit the module number from the Screen column.
 - Never output standalone headings such as:
   - Module {module_num}
   - Screen {module_num}.1 Title
@@ -539,6 +569,8 @@ Never output standalone headings.
 Never output Module titles outside the table.
 
 Never output Screen titles outside the table.
+
+Every value in the Screen column must begin with the current module identifier, for example "Module 1 - Screen 1.1 - Introduction".
 
 Every row begins with "|" and ends with "|".
 
@@ -596,7 +628,8 @@ RULES:
 {get_quality_rules(intake_data)}
 {get_knowledge_check_rules(intake_data)}
 - Include a Knowledge Check row as the final row for this module.
-- SECTION: Descriptive names (Introduction, Core Concepts, Activity, Quiz, Summary).
+- SECTION: Every Section value MUST begin with "Module {module_num} - ". Examples: "Module {module_num} - Introduction", "Module {module_num} - Core Concepts", "Module {module_num} - Activity", "Module {module_num} - Summary", and "Module {module_num} - Knowledge Check".
+- Never omit the module number from the Section column.
 - TOPICS: Specific objectives and concise learner-facing statements separated using <br>.
 - VISUAL: Specific directions ("Show static image of X", animations, layouts, facilitator videos).
 - OST: Actual learner-facing text. Present concise facts and definitions separated with <br>. NEVER meta-descriptions.
@@ -639,8 +672,8 @@ The table MUST contain EXACTLY these seven columns.
 
 | Section | Topics | Visual Instructions & Developer Notes | On-Screen Text | Audio Narration | Status | Actions Required |
 |---------|--------|----------------------------------------|----------------|-----------------|--------|------------------|
-| Introduction | Cyber Security Basics<br>Threat Landscape | Show title banner and cyber security icon. | Cyber Security protects systems and information.<br>Threats continue to evolve. | Welcome to this module. Today we will explore cyber security fundamentals. Click Next to continue. | Draft | Create title slide |
-| Core Concepts | Malware<br>Phishing | Show malware infographic. | Malware includes viruses, worms and trojans.<br>Phishing targets users through deception. | Let's understand the most common cyber threats. Click Next to continue. | Draft | Design infographic |
+| Module {module_num} - Introduction | Cyber Security Basics<br>Threat Landscape | Show title banner and cyber security icon. | Cyber Security protects systems and information.<br>Threats continue to evolve. | Welcome to this module. Today we will explore cyber security fundamentals. Click Next to continue. | Draft | Create title slide |
+| Module {module_num} - Core Concepts | Malware<br>Phishing | Show malware infographic. | Malware includes viruses, worms and trojans.<br>Phishing targets users through deception. | Let's understand the most common cyber threats. Click Next to continue. | Draft | Design infographic |
 
 Continue using EXACTLY the same table structure.
 
@@ -655,7 +688,7 @@ Rules:
 - Never split one screen into multiple rows.
 - Never insert blank lines inside the table.
 - Use <br> for line breaks inside cells.
-- The Knowledge Check must be the final table row.
+- The Knowledge Check must be the final table row, and its Section value MUST be "Module {module_num} - Knowledge Check".
 - Do not close the table until the final Knowledge Check row has been completed.
 - The Knowledge Check must remain inside the table.
 
@@ -696,6 +729,8 @@ Never output standalone headings.
 Never output Module titles outside the table.
 
 Never output Screen titles outside the table.
+
+Every value in the Section column must begin with the current module identifier, for example "Module 1 - Introduction".
 
 Every row begins with "|" and ends with "|".
 

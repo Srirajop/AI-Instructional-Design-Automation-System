@@ -183,8 +183,8 @@ export default function IntakeForm({ onBack, onComplete }) {
                                         const isChecked = (formData.experience_level || '').split(', ').includes(opt);
                                         return (
                                             <label key={opt} className="flex items-center gap-2 text-sm cursor-pointer hover:bg-slate-50 p-1 rounded" style={{ margin: 0 }}>
-                                                <input 
-                                                    type="checkbox" 
+                                                <input
+                                                    type="checkbox"
                                                     checked={isChecked}
                                                     onChange={(e) => {
                                                         let current = (formData.experience_level || '').split(', ').filter(Boolean);
@@ -302,15 +302,8 @@ export default function IntakeForm({ onBack, onComplete }) {
                 </div>
 
                 <div className="card">
-                    <h3 className="text-lg font-semibold mb-4 border-b pb-2">5. Knowledge Checks and Language</h3>
+                    <h3 className="text-lg font-semibold mb-4 border-b pb-2">5. Knowledge Checks</h3>
                     <div className="grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                        <div className="form-group mb-0">
-                            <label className="form-label">Language Preference</label>
-                            <select className="form-control" name="language_preference" value={formData.language_preference} onChange={handleChange}>
-                                <option>American English</option>
-                                <option>British English</option>
-                            </select>
-                        </div>
                         <div className="form-group mb-0">
                             <label className="form-label">Knowledge Check Difficulty</label>
                             <select className="form-control" name="knowledge_check_difficulty" value={formData.knowledge_check_difficulty} onChange={handleChange}>
