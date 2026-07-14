@@ -442,7 +442,7 @@ def _generate_single_module_type1(client, module_num: int, total_modules: int, d
     prompt = f"""Generate storyboard for MODULE {module_num} ONLY (of {total_modules}).
 
 DESIGN DOCUMENT:
-{design_doc[:2800]}
+{design_doc[:2200]}
 
 MODULE KNOWLEDGE CHECK:
 {module_knowledge_check}
@@ -451,7 +451,7 @@ SOURCE CONTENT (REFERENCE ONLY)
 
 ---------------- START SOURCE ----------------
 
-{content[:2000]}
+{content[:1200]}
 
 ---------------- END SOURCE ----------------
 IMPORTANT:
@@ -467,6 +467,7 @@ Do NOT reproduce the source document.
 
 RULES:
 - OST: Actual text learner reads. Real facts, definitions, bullet points. NEVER "The narrator explains..."
+- INTRODUCTION SCREEN OST: Never write generic greetings such as "Welcome to this module" in the On-Screen Text. The OST for Screen {module_num}.1 must contain meaningful, module-specific content derived from the Design Document and Source Content, such as the module topic, key concepts, or learning focus. Welcome greetings are allowed only in AUDIO NARRATION.
 - AUDIO: Actual narrator script. Conversational, professional, 5-8 sentences. End with "Click Next to continue." NEVER "The narrator says..."
 - VISUAL: Specific designer directions. Name images ("Show static image of X"), describe animations, layout, navigation.
 - No placeholders. No AI buzzwords. Content from source only.
@@ -509,7 +510,7 @@ The table MUST contain EXACTLY these four columns.
 
 | Screen | ON-SCREEN TEXT (OST) | AUDIO NARRATION | VISUAL INSTRUCTIONS & DEVELOPER NOTES |
 |--------|-----------------------|-----------------|---------------------------------------|
-| Module {module_num} - Screen {module_num}.1 - Introduction | Welcome to this module.<br>Topic 1<br>Topic 2 | Welcome to this module. In this lesson you will learn the key concepts. Click Next to continue. | Show title banner, relevant icon and fade-in animation. |
+| Module {module_num} - Screen {module_num}.1 - Introduction | Module title or topic-specific introductory content.<br>Key learning point 1.<br>Key learning point 2. | Welcome to this module. In this lesson, we will explore the key concepts and learning objectives for this module. Click Next to continue. | Show title banner, relevant topic-specific icon and fade-in animation. |
 | Module {module_num} - Screen {module_num}.2 - Main Concept | Explain the concept using concise learner-facing text.<br>Additional learner-facing point. | Explain the concept conversationally. End with "Click Next to continue." | Show infographic and highlight important elements. |
 
 Continue using EXACTLY the same table structure.
@@ -586,7 +587,7 @@ Do not leave the table until the Knowledge Check row is complete.
         ],
         model="llama-3.1-8b-instant",
         temperature=0.2,
-        max_tokens=3500,
+        max_tokens=2800,
     )
     return r.choices[0].message.content
 
@@ -600,7 +601,7 @@ def _generate_single_module_type2(client, module_num: int, total_modules: int, d
 
 
 DESIGN DOCUMENT:
-{design_doc[:3000]}
+{design_doc[:2200]}
 
 MODULE KNOWLEDGE CHECK:
 {module_knowledge_check}
@@ -609,7 +610,7 @@ SOURCE CONTENT (REFERENCE ONLY)
 
 ---------------- START SOURCE ----------------
 
-{content[:2000]}
+{content[:1200]}
 
 ---------------- END SOURCE ----------------
 IMPORTANT:
@@ -633,6 +634,7 @@ RULES:
 - TOPICS: Specific objectives and concise learner-facing statements separated using <br>.
 - VISUAL: Specific directions ("Show static image of X", animations, layouts, facilitator videos).
 - OST: Actual learner-facing text. Present concise facts and definitions separated with <br>. NEVER meta-descriptions.
+- INTRODUCTION SCREEN OST: Never write generic greetings such as "Welcome to this module" in the On-Screen Text. The OST for the introduction row must contain meaningful, module-specific content derived from the Design Document and Source Content, such as the module topic, key concepts, or learning focus. Welcome greetings are allowed only in AUDIO NARRATION.
 - AUDIO: Actual narrator script. Conversational, professional. NEVER "The narrator explains". Include cues like "Show image #1>>". End with "Click Next to continue."
 - STATUS: "Draft".
 - ACTIONS: Production notes ("Slide design required", "Animation needed").
@@ -672,8 +674,9 @@ The table MUST contain EXACTLY these seven columns.
 
 | Section | Topics | Visual Instructions & Developer Notes | On-Screen Text | Audio Narration | Status | Actions Required |
 |---------|--------|----------------------------------------|----------------|-----------------|--------|------------------|
-| Module {module_num} - Introduction | Cyber Security Basics<br>Threat Landscape | Show title banner and cyber security icon. | Cyber Security protects systems and information.<br>Threats continue to evolve. | Welcome to this module. Today we will explore cyber security fundamentals. Click Next to continue. | Draft | Create title slide |
+| Module {module_num} -| Introduction | Cyber Security Basics<br>Threat Landscape | Show title banner and cyber security icon. | Cyber security protects systems, networks, and information.<br>This module explores key threats and fundamental protection concepts. | Welcome to this module. Today we will explore cyber security fundamentals and the key concepts covered in this module. Click Next to continue. | Draft | Create title slide | 
 | Module {module_num} - Core Concepts | Malware<br>Phishing | Show malware infographic. | Malware includes viruses, worms and trojans.<br>Phishing targets users through deception. | Let's understand the most common cyber threats. Click Next to continue. | Draft | Design infographic |
+
 
 Continue using EXACTLY the same table structure.
 
@@ -746,7 +749,7 @@ Do not leave the table until the Knowledge Check row is complete.
         ],
         model="llama-3.1-8b-instant",
         temperature=0.2,
-        max_tokens=3500,
+        max_tokens=2800,
     )
     return r.choices[0].message.content
 

@@ -8,6 +8,8 @@ export default function IntakeForm({ onBack, onComplete }) {
     const [error, setError] = useState('');
     const [files, setFiles] = useState([]);
     const [urls, setUrls] = useState('');
+    const [showKnowledgeTypes, setShowKnowledgeTypes] = useState(false);
+
 
     // Form state matching the backend Intake model exactly
     const [formData, setFormData] = useState({
@@ -320,7 +322,84 @@ export default function IntakeForm({ onBack, onComplete }) {
                         </div>
                         <div className="form-group mb-0">
                             <label className="form-label">Knowledge Check Types</label>
-                            <input type="text" className="form-control" name="knowledge_check_types" value={formData.knowledge_check_types} onChange={handleChange} />
+
+                            <div style={{ position: 'relative' }}>
+                                <button
+                                    type="button"
+                                    className="form-control"
+                                    onClick={() => setShowKnowledgeTypes(!showKnowledgeTypes)}
+                                    style={{
+                                        textAlign: 'left',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center'
+                                    }}
+                                >
+                                    <span>
+                                        {formData.knowledge_check_types || 'Select Knowledge Check Types'}
+                                    </span>
+                                    <span>⌄</span>
+                                </button>
+
+                                {showKnowledgeTypes && (
+                                    <div
+                                        style={{
+                                            position: 'absolute',
+                                            top: '100%',
+                                            left: 0,
+                                            right: 0,
+                                            background: 'white',
+                                            border: '1px solid #ddd',
+                                            borderRadius: '8px',
+                                            padding: '10px',
+                                            zIndex: 1000,
+                                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                                        }}
+                                    >
+                                        {[
+                                            'Multiple Choice',
+                                            'True/False',
+                                            'Fill in the Blank',
+                                            'Scenario-Based'
+                                        ].map((type) => {
+                                            const selectedTypes = formData.knowledge_check_types
+                                                .split(',')
+                                                .map(item => item.trim())
+                                                .filter(Boolean);
+
+                                            return (
+                                                <label
+                                                    key={type}
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '10px',
+                                                        padding: '8px',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedTypes.includes(type)}
+                                                        onChange={() => {
+                                                            const updatedTypes = selectedTypes.includes(type)
+                                                                ? selectedTypes.filter(item => item !== type)
+                                                                : [...selectedTypes, type];
+
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                knowledge_check_types: updatedTypes.join(', ')
+                                                            }));
+                                                        }}
+                                                    />
+                                                    {type}
+                                                </label>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
