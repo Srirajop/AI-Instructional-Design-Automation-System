@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+
+# Environment
+.env
+venv/
+
+# Uploaded documents
+uploads/
+
+# Temporary files
+test_gemini.py
