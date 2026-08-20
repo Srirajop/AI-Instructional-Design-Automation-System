@@ -9,6 +9,8 @@ export default function IntakeForm({ onBack, onComplete }) {
     const [files, setFiles] = useState([]);
     const [urls, setUrls] = useState('');
     const [showKnowledgeTypes, setShowKnowledgeTypes] = useState(false);
+    const [styleGuideFile, setStyleGuideFile] = useState(null);
+    const [styleGuideError, setStyleGuideError] = useState('');
 
 
     // Form state matching the backend Intake model exactly
@@ -89,6 +91,21 @@ export default function IntakeForm({ onBack, onComplete }) {
                 body: JSON.stringify(formData)
             });
             const projectId = projectResponse.id;
+
+            // 1b. Upload Style Guide PDF if provided
+            if (styleGuideFile) {
+                try {
+                    const sgForm = new FormData();
+                    sgForm.append('file', styleGuideFile);
+                    await api.request(`/intake/${projectId}/style-guide`, {
+                        method: 'POST',
+                        body: sgForm
+                    });
+                } catch (sgErr) {
+                    // Report failure clearly but do NOT abort — source material upload continues
+                    setError(`Style guide upload failed: ${sgErr.message}. Continuing without style guide.`);
+                }
+            }
 
             // 2. Upload/Process Files sequentially
             for (let i = 0; i < files.length; i++) {
@@ -414,6 +431,60 @@ export default function IntakeForm({ onBack, onComplete }) {
                         </div>
                         <div className="form-group mb-0">
                             <label className="form-label">Guidelines / Spelling Check Notes</label>
+
+                            {/* Style Guide PDF Upload */}
+                            <div style={{ marginBottom: '0.75rem' }}>
+                                <input
+                                    type="file"
+                                    id="style-guide-pdf"
+                                    accept=".pdf"
+                                    onChange={(e) => {
+                                        setStyleGuideError('');
+                                        const f = e.target.files && e.target.files[0];
+                                        if (!f) return;
+                                        if (!f.name.toLowerCase().endsWith('.pdf')) {
+                                            setStyleGuideError('Only PDF files are accepted for the style guide.');
+                                            e.target.value = '';
+                                            return;
+                                        }
+                                        if (f.size > 50 * 1024 * 1024) {
+                                            setStyleGuideError('Style guide PDF must be 50 MB or smaller.');
+                                            e.target.value = '';
+                                            return;
+                                        }
+                                        setStyleGuideFile(f);
+                                        e.target.value = '';
+                                    }}
+                                    style={{ position: 'absolute', width: '1px', height: '1px', overflow: 'hidden', opacity: 0 }}
+                                />
+                                {!styleGuideFile ? (
+                                    <label
+                                        htmlFor="style-guide-pdf"
+                                        className="btn btn-outline"
+                                        style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', padding: '0.45rem 1rem' }}
+                                    >
+                                        <UploadCloud size={15} /> Upload Style Guide PDF
+                                    </label>
+                                ) : (
+                                    <div className="flex items-center gap-3 p-2 rounded-lg border border-light" style={{ background: 'white', boxShadow: 'var(--shadow-sm)', display: 'inline-flex' }}>
+                                        <FileText size={14} className="text-primary flex-shrink-0" />
+                                        <span className="text-sm" style={{ color: 'var(--text)', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={styleGuideFile.name}>{styleGuideFile.name}</span>
+                                        <button
+                                            type="button"
+                                            onClick={() => setStyleGuideFile(null)}
+                                            className="p-1 hover:bg-danger-light rounded text-danger transition-colors"
+                                            title="Remove style guide"
+                                        >
+                                            <X size={14} />
+                                        </button>
+                                    </div>
+                                )}
+                                {styleGuideError && (
+                                    <p className="text-danger text-xs mt-1">{styleGuideError}</p>
+                                )}
+                            </div>
+
+                            {/* Existing manual guidelines textarea — unchanged */}
                             <textarea className="form-control" name="guidelines" placeholder="Add client-specific terminology, tone, words to avoid, or spelling rules." value={formData.guidelines} onChange={handleChange} style={{ minHeight: '100px', resize: 'vertical' }} />
                         </div>
                     </div>

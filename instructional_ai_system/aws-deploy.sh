@@ -30,12 +30,12 @@ cd /home/ubuntu/app
 
 # 6. Create .env file for Docker Compose
 cat <<EOF > .env
-GROQ_API_KEY=your_production_groq_api_key_here
+GEMINI_API_KEY=your_production_gemini_api_key_here
 DB_PASSWORD=secure_database_password_123
 SECRET_KEY=$(openssl rand -hex 32)
 EOF
 
 echo "Deployment fetched!"
-echo "Please edit the .env file with your actual GROQ_API_KEY: nano .env"
+echo "Please edit the .env file with your actual GEMINI_API_KEY: nano .env"
 echo "After editing, run: sudo docker-compose -f docker-compose.yml up -d --build"
 echo "Note: If docker-compose command is not found, you can run: sudo apt install docker-compose-v2 then use docker compose up -d --build"

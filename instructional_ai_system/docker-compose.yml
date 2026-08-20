@@ -20,7 +20,7 @@ services:
     depends_on:
       - db
     environment:
-      - GROQ_API_KEY=${GROQ_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
       - DATABASE_URL=mysql+pymysql://root:${DB_PASSWORD:-mypassword}@db:3306/instructional_ai
       - SECRET_KEY=${SECRET_KEY:-default_secret_key_change_me_in_production}
       - ALGORITHM=HS256

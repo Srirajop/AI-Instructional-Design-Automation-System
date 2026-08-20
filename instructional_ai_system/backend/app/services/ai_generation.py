@@ -111,14 +111,24 @@ def get_language_rules(intake_data: Dict) -> str:
 
 
 def get_quality_rules(intake_data: Dict) -> str:
-    return f"""
-LANGUAGE AND STYLE:
+    # If user uploaded a PDF style guide, prepend it as explicit AI instructions
+    pdf_style_guide = intake_data.get("style_guide_pdf_text", "").strip()
+    pdf_guide_section = ""
+    if pdf_style_guide:
+        pdf_guide_section = f"""
+STYLE GUIDE / GUIDELINES PROVIDED BY USER (PDF UPLOAD):
+{pdf_style_guide}
+
+"""
+
+    return f"""{pdf_guide_section}LANGUAGE AND STYLE:
 - {get_language_rules(intake_data)}
 - Follow this style guide: {intake_data.get('style_guide', 'Clear, professional, concise instructional design language.')}
 - Apply these project guidelines: {intake_data.get('guidelines', 'Use plain language, correct spelling, and a consistent instructional tone.')}
 - Run a spelling and grammar pass before finalizing. Do not output shuffled phrases, sentence fragments, or out-of-sequence content.
 - Keep each paragraph logically ordered: concept, example, learner action, then feedback or takeaway.
 """
+
 
 
 def get_knowledge_check_rules(intake_data: Dict) -> str:
