@@ -72,7 +72,7 @@ async def upload_project(
                 text = "Unsupported format"
                 
             # 3. Beautify Content with AI
-            api_key = os.getenv("GROQ_API_KEY")
+            api_key = os.getenv("GEMINI_API_KEY")
             beautified_text = text
             if api_key:
                 try:

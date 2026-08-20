@@ -6,7 +6,7 @@ python-dotenv
 passlib[bcrypt]
 python-jose[cryptography]
 python-multipart
-groq
+google-genai
 email-validator
 fastapi-mail
 python-docx

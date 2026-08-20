@@ -9,6 +9,9 @@ StoryBoard AI â€” Document Editing Engine v4
 - Intent classifier won't fire on casual messages
 """
 
+from . import ai_generation
+from google import genai
+
 import json, re, os, difflib
 from typing import List, Dict, Tuple
 import requests
@@ -345,17 +348,27 @@ Return ONLY JSON:
 }"""
 
 
-def classify_intent(instruction: str, history: List[Dict], groq_key: str) -> Dict:
+def classify_intent(instruction: str, history: List[Dict], gemini_key: str) -> Dict:   
     try:
-        from groq import Groq
-        client = Groq(api_key=groq_key)
-        msgs = [{"role": "system", "content": CLASSIFIER_SYS}]
+        client = genai.Client(api_key=gemini_key)
+        conversation = CLASSIFIER_SYS + "\n\n"
+
+        # pyrefly: ignore [parse-error]
         if history:
-            for m in history[-6:]: msgs.append({"role": m["role"], "content": m["content"]})
-        msgs.append({"role": "user", "content": f"CLASSIFY: {instruction}"})
-        r = client.chat.completions.create(model="llama-3.1-8b-instant", messages=msgs,
-                                           response_format={"type": "json_object"}, max_tokens=250)
-        return json.loads(r.choices[0].message.content)
+            for m in history[-6:]:
+                role = "User" if m["role"] == "user" else "Assistant"
+                conversation += f"{role}: {m['content']}\n"
+
+        conversation += f"\nUser: CLASSIFY: {instruction}"
+
+
+        response = client.models.generate_content(
+        model="gemini-3.5-flash",
+        contents=conversation,
+        )
+
+
+        return json.loads(response.text)
     except Exception as e:
         print(f"Classifier error: {e}")
         action_words = ["change","update","edit","fix","make","rewrite","shorten","expand",
@@ -428,10 +441,9 @@ def ai_edit_document(
     selected_col_index: int = None,
     selected_col_name: str = None,
 ) -> Dict:
-    groq_key = api_key or os.environ.get("GROQ_API_KEY", "")
+    gemini_key = api_key or os.environ.get("GEMINI_API_KEY", "")
     history = chat_history or []
-    API_URL = "https://backend.buildpicoapps.com/aero/run/llm-api?pk=v1-Z0FBQUFBQnBtS2ptdFNtblZXcldCVV80M2ZLbElhOHhGMzd1Z1c1NWpiMXdfMU5uX3VVWkR5Q0N3OGEwUElfNWRIWVI3QkFxQ2FCU2ZRV0JLSVBja2dBaXR6dTN2WktVZVE9PQ=="
-
+    
     def fail(msg): return {"assistant_reply": msg, "updated_document": current_doc,
                            "original_document": current_doc, "is_edit": False, "diff": []}
 
@@ -461,8 +473,12 @@ def ai_edit_document(
             "chat_reply": ""
         }
     else:
-        intent_data = classify_intent(user_instruction, history, groq_key)
-
+        intent_data = classify_intent(
+            user_instruction,
+            history,
+            gemini_key
+        )
+        
     if intent_data.get("intent") == "CHAT":
         return {
             "assistant_reply": intent_data.get("chat_reply") or "I'm here to help! Let me know if you want to edit any part of the storyboard.",
@@ -605,15 +621,20 @@ def ai_edit_document(
 
     # â”€â”€ Step 4: Call LLM â”€â”€
     try:
+        client = genai.Client(api_key=gemini_key)
+
         full_prompt = EDIT_SYS + "\n\n" + user_prompt
-        resp = requests.post(API_URL, json={"prompt": full_prompt},
-                             headers={"Content-Type": "application/json"}, timeout=60)
-        data = resp.json()
-        if data.get("status") != "success": raise Exception(str(data))
-        parsed = _extract_json(data.get("text", ""))
+
+        response = client.models.generate_content(
+            model="gemini-3.5-flash",
+            contents=full_prompt,
+        )
+
+        parsed = _extract_json(response.text)
+
     except Exception as e:
         return fail(f"AI call failed: {str(e)}")
-
+        
     # â”€â”€ Step 5: Apply â”€â”€
     if not parsed.get("is_edit") or not parsed.get("edits"):
         return {"assistant_reply": parsed.get("assistant_reply", "No changes made."),

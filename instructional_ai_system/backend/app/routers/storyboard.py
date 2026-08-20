@@ -1,6 +1,7 @@
 import os
 import json
 import time
+from google import genai
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
@@ -18,10 +19,9 @@ def generate_storyboard_stream(project_id: str, storyboard_type: str = "Type 1",
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    api_key = os.getenv("GROQ_API_KEY")
+    api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        raise HTTPException(status_code=500, detail="Server misconfiguration: missing Groq API Key")
-
+        raise HTTPException(status_code=500, detail="Server misconfiguration: missing Gemini API Key")
     intake_data = json.loads(project.intake_data) if project.intake_data else {}
     content = project.extracted_content or ""
     design_doc = project.design_doc or ""
@@ -47,8 +47,7 @@ def generate_storyboard_stream(project_id: str, storyboard_type: str = "Type 1",
         return StreamingResponse(upload_event_stream(), media_type="text/event-stream")
 
     # Standard module-by-module generation for AI-generated projects
-    from groq import Groq
-    client = Groq(api_key=api_key)
+    client = ai_generation.genai.Client(api_key=api_key)
     strategies = ai_generation.get_strategy_for_level(intake_data.get('interactivity_level', ''))
     num_modules = int(intake_data.get('num_modules', 3))
     generate_fn = ai_generation._generate_single_module_type1 if storyboard_type == "Type 1" else ai_generation._generate_single_module_type2

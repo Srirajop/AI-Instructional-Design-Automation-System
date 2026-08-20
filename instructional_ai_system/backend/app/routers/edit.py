@@ -13,7 +13,7 @@ def ai_chat_edit(request: schemas.DocumentEditRequest, project_id: str, db: Sess
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
         
-    api_key = os.getenv("GROQ_API_KEY")
+    api_key = os.getenv("GEMINI_API_KEY")
     
     # Get chat history for this specific doc type
     chat_history_db = db.query(models.ChatMessage).filter(

@@ -14,9 +14,10 @@ def generate_design_doc(project_id: str, db: Session = Depends(get_db), current_
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
         
-    api_key = os.getenv("GROQ_API_KEY")
+    api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        raise HTTPException(status_code=500, detail="Server misconfiguration: missing Groq API Key")
+        detail="Server misconfiguration: missing Gemini API Key"
+        
         
     try:
         intake_data = json.loads(project.intake_data) if project.intake_data else {}

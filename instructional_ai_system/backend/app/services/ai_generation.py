@@ -1,8 +1,9 @@
-﻿import json
+import json
 import re
+import traceback
 from datetime import datetime
 from typing import Dict, Optional
-from groq import Groq
+from google import genai
 from fastapi import HTTPException
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -148,7 +149,7 @@ def generate_design_document(api_key: str, intake_data: Dict, content: str) -> s
         if not api_key:
             raise HTTPException(status_code=401, detail="Groq API key is missing")
 
-        client = Groq(api_key=api_key)
+        client = genai.Client(api_key=api_key)
         strategies = get_strategy_for_level(intake_data.get('interactivity_level', ''))
         question_count = intake_data.get("question_count", "10")
         difficulty = intake_data.get("difficulty_level", "Medium")
@@ -426,23 +427,22 @@ IMPORTANT INSTRUCTIONS:
 
 Generate the complete Design Document now:"""
 
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": "You are an expert Instructional Designer who creates detailed, professional design documents based on source materials."},
-                {"role": "user", "content": prompt}
-            ],
-            model="llama-3.1-8b-instant",
-            temperature=0.7,
-            max_tokens=2000,
-        )
-        result = chat_completion.choices[0].message.content
+        response = client.models.generate_content(
+        model="gemini-3.5-flash",
+        contents=(
+            "You are an expert Instructional Designer who creates detailed "
+            "professional Design Documents.\n\n"
+            + prompt
+        ),
+    )
+
+        result = response.text
+      
         return fix_markdown_tables(result)
             
     except Exception as e:
-        # Increase visibility of errors
-        error_msg = str(e)
-        raise HTTPException(status_code=500, detail=f"Error generating Design Document: {error_msg}")
-
+        traceback.print_exc()
+        raise
 
 import time as _time
 
@@ -566,10 +566,10 @@ or
 
 Everything must remain inside Markdown table cells.
 Do not close the table until the final Knowledge Check row has been completed."""
-
-    r = client.chat.completions.create(
-        messages=[
-            {"role": "system", "content": """You are a senior eLearning Storyboard Developer.
+    response = client.models.generate_content(
+        model="gemini-3.5-flash",
+        contents=(
+            """You are a senior eLearning Storyboard Developer.
 
 Always return valid GitHub-Flavored Markdown.
 
@@ -581,7 +581,7 @@ Never output Module titles outside the table.
 
 Never output Screen titles outside the table.
 
-Every value in the Screen column must begin with the current module identifier, for example "Module 1 - Screen 1.1 - Introduction".
+Every value in the Screen column must begin with the current module identifier.
 
 Every row begins with "|" and ends with "|".
 
@@ -592,14 +592,13 @@ Use <br> inside table cells.
 Do not use Markdown bullet lists inside table cells.
 
 Do not leave the table until the Knowledge Check row is complete.
-"""},
-            {"role": "user", "content": prompt}
-        ],
-        model="llama-3.1-8b-instant",
-        temperature=0.2,
-        max_tokens=2800,
+
+"""
+            + prompt
+        ),
     )
-    return r.choices[0].message.content
+
+    return response.text
 
 
 def _generate_single_module_type2(client, module_num: int, total_modules: int, design_doc: str, intake_data: Dict, content: str, strategies: Dict) -> str:
@@ -729,9 +728,10 @@ or
 Everything must remain inside Markdown table cells.
 Return nothing except the completed Markdown table."""
 
-    r = client.chat.completions.create(
-        messages=[
-            {"role": "system", "content": """You are a senior eLearning Storyboard Developer.
+    response = client.models.generate_content(
+        model="gemini-3.5-flash",
+        contents=(
+        """You are a senior eLearning Storyboard Developer.
 
 Always return valid GitHub-Flavored Markdown.
 
@@ -754,15 +754,13 @@ Use <br> inside table cells.
 Do not use Markdown bullet lists inside table cells.
 
 Do not leave the table until the Knowledge Check row is complete.
-"""},
-            {"role": "user", "content": prompt}
-        ],
-        model="llama-3.1-8b-instant",
-        temperature=0.2,
-        max_tokens=2800,
-    )
-    return r.choices[0].message.content
 
+"""
+        + prompt
+        ),
+    )
+
+    return response.text
 
 @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=3, min=5, max=60), reraise=True)
 def _call_module_with_retry(generate_fn, client, module_num, total_modules, design_doc, intake_data, content, strategies):
@@ -821,7 +819,7 @@ def generate_storyboard(api_key: str, design_doc: str, intake_data: Dict, conten
         if not api_key:
             raise HTTPException(status_code=401, detail="Groq API key is missing")
 
-        client = Groq(api_key=api_key)
+        client = genai.Client(api_key=api_key)
         strategies = get_strategy_for_level(intake_data.get('interactivity_level', ''))
         num_modules = int(intake_data.get('num_modules', 3))
 
@@ -983,9 +981,9 @@ def beautify_uploaded_content(api_key: str, content: str, target_type: str, stor
     """Uses AI to format a raw file dump into a professional project document."""
     try:
         if not api_key:
-            raise HTTPException(status_code=401, detail="Groq API key is missing")
+            raise HTTPException(status_code=401, detail="Gemini API key is missing")
 
-        client = Groq(api_key=api_key)
+        client = genai.Client(api_key=api_key)
         
         # Storyboard Format Detection
         is_storyboard_type2 = False
@@ -1086,19 +1084,21 @@ RAW EXTRACTED CONTENT:
 Generate the professional {doc_name} Markdown now:"""
 
         # Using the most powerful 70B model for multi-instruction adherence
-        print("Using Llama-3.3-70b-versatile for High-Precision Beautify...")
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": "You are a master Instructional Designer. You follow structural and formatting constraints perfectly. You never put non-table data inside a table."},
-                {"role": "user", "content": prompt}
-            ],
-            model="llama-3.3-70b-versatile",
-            temperature=0.1, 
-            max_tokens=8000,
+        print("Using Gemini 2.5 Flash for High-Precision Beautify...")
+
+        response = client.models.generate_content(
+            model="gemini-3.5-flash",
+            contents=(
+                "You are a master Instructional Designer. "
+                "You follow structural and formatting constraints perfectly. "
+                "You never put non-table data inside a table.\n\n"
+                + prompt
+            ),
         )
-        result = chat_completion.choices[0].message.content
+
+        result = response.text
+
         return fix_markdown_tables(result)
-            
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error beautifying content: {str(e)}")
 
