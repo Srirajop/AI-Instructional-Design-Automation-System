@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { api } from '../api';
 import { ArrowLeft, UploadCloud, CheckCircle, X, FileText, FolderTree } from 'lucide-react';
 import FolderManager from './FolderManager';
+import GrammarTextarea from './GrammarTextarea';
 
 export default function IntakeForm({ onBack, onComplete }) {
     const [loading, setLoading] = useState(false);
@@ -147,7 +148,7 @@ export default function IntakeForm({ onBack, onComplete }) {
                     <div className="grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                         <div className="form-group mb-0">
                             <label className="form-label">Course Title *</label>
-                            <input type="text" className="form-control" name="course_title" required value={formData.course_title} onChange={handleChange} />
+                            <GrammarTextarea singleLine={true} className="form-control" name="course_title" required value={formData.course_title} onChange={handleChange} />
                         </div>
                         <div className="form-group mb-0">
                             <label className="form-label">Business Unit / Function *</label>
@@ -214,7 +215,7 @@ export default function IntakeForm({ onBack, onComplete }) {
                     <div className="grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                         <div className="form-group mb-0">
                             <label className="form-label">Primary Audience Role *</label>
-                            <input type="text" className="form-control" name="target_audience" required placeholder="e.g., IT Security Professionals" value={formData.target_audience} onChange={handleChange} />
+                            <GrammarTextarea singleLine={true} className="form-control" name="target_audience" required placeholder="e.g., IT Security Professionals" value={formData.target_audience} onChange={handleChange} />
                         </div>
                         <div className="form-group mb-0">
                             <label className="form-label">Geographic Spread</label>
@@ -238,13 +239,13 @@ export default function IntakeForm({ onBack, onComplete }) {
                     <h3 className="text-lg font-semibold mb-4 border-b pb-2">3. Primary Learning Objectives</h3>
                     <div className="flex flex-col gap-3">
                         <div className="form-group mb-0">
-                            <input type="text" className="form-control" name="objective_1" required placeholder="Learners will be able to... *" value={formData.objective_1} onChange={handleChange} />
+                            <GrammarTextarea singleLine={true} className="form-control" name="objective_1" required placeholder="Learners will be able to... *" value={formData.objective_1} onChange={handleChange} />
                         </div>
                         <div className="form-group mb-0">
-                            <input type="text" className="form-control" name="objective_2" placeholder="Learners will be able to... (Optional)" value={formData.objective_2} onChange={handleChange} />
+                            <GrammarTextarea singleLine={true} className="form-control" name="objective_2" placeholder="Learners will be able to... (Optional)" value={formData.objective_2} onChange={handleChange} />
                         </div>
                         <div className="form-group mb-0">
-                            <input type="text" className="form-control" name="objective_3" placeholder="Learners will be able to... (Optional)" value={formData.objective_3} onChange={handleChange} />
+                            <GrammarTextarea singleLine={true} className="form-control" name="objective_3" placeholder="Learners will be able to... (Optional)" value={formData.objective_3} onChange={handleChange} />
                         </div>
                     </div>
                 </div>
@@ -310,11 +311,11 @@ export default function IntakeForm({ onBack, onComplete }) {
                     <div className="grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                         <div className="form-group mb-0">
                             <label className="form-label">Style Guide</label>
-                            <textarea className="form-control" name="style_guide" value={formData.style_guide} onChange={handleChange} style={{ minHeight: '100px', resize: 'vertical' }} />
+                            <GrammarTextarea className="form-control" name="style_guide" value={formData.style_guide} onChange={handleChange} style={{ minHeight: '100px' }} />
                         </div>
                         <div className="form-group mb-0">
                             <label className="form-label">Guidelines / Spelling Check Notes</label>
-                            <textarea className="form-control" name="guidelines" placeholder="Add client-specific terminology, tone, words to avoid, or spelling rules." value={formData.guidelines} onChange={handleChange} style={{ minHeight: '100px', resize: 'vertical' }} />
+                            <GrammarTextarea className="form-control" name="guidelines" placeholder="Add client-specific terminology, tone, words to avoid, or spelling rules." value={formData.guidelines} onChange={handleChange} style={{ minHeight: '100px' }} />
                         </div>
                     </div>
                 </div>

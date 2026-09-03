@@ -1,8 +1,8 @@
-﻿import json
+import json
 import re
 from datetime import datetime
 from typing import Dict, Optional
-from groq import Groq
+from openai import OpenAI
 from fastapi import HTTPException
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -140,7 +140,7 @@ def generate_design_document(api_key: str, intake_data: Dict, content: str) -> s
         if not api_key:
             raise HTTPException(status_code=401, detail="Groq API key is missing")
 
-        client = Groq(api_key=api_key)
+        client = OpenAI(api_key=api_key, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
         strategies = get_strategy_for_level(intake_data.get('interactivity_level', ''))
         
         prompt = f"""You are an expert Instructional Designer creating a comprehensive Design Document.
@@ -240,16 +240,17 @@ IMPORTANT INSTRUCTIONS:
 
 Generate the complete Design Document now:"""
 
-        chat_completion = client.chat.completions.create(
+        response = client.chat.completions.create(
+            model="gemini-3.5-flash",
             messages=[
                 {"role": "system", "content": "You are an expert Instructional Designer who creates detailed, professional design documents based on source materials."},
                 {"role": "user", "content": prompt}
             ],
-            model="llama-3.1-8b-instant",
             temperature=0.7,
             max_tokens=2000,
         )
-        result = chat_completion.choices[0].message.content
+        result = response.choices[0].message.content
+
         return result
             
     except Exception as e:
@@ -279,6 +280,8 @@ RULES:
 - VISUAL: Specific designer directions. Name images ("Show static image of X"), describe animations, layout, navigation.
 - No placeholders. No AI buzzwords. Content from source only.
 - Use <br> for line breaks in cells. Each row = ONE line.
+- CRITICAL: Break the module content down into AT LEAST 5 separate screens. 
+- CRITICAL: Each screen MUST have its own "Screen X.X Title:" header, followed by a separate Markdown table for that screen. NEVER merge all content into a single table.
 
 FORMAT:
 
@@ -294,16 +297,17 @@ Screen {module_num}.1 Title: [Descriptive Title]
 
 Generate 5-8 screens for Module {module_num} now:"""
 
-    r = client.chat.completions.create(
+    response = client.chat.completions.create(
+        model="gemini-3.5-flash",
         messages=[
-            {"role": "system", "content": "You are a senior eLearning Storyboard Developer. Write production-ready storyboards. OST = real learner text. Audio = actual narrator script. Visual = specific graphic designer directions. No AI slop. CRITICAL: Every table row MUST be ONE PHYSICAL LINE. Use <br> for all internal line breaks."},
+            {"role": "system", "content": "You are a senior eLearning Storyboard Developer. NEVER summarize or skip content. Be extremely detailed. OST = real learner text. Audio = actual narrator script. Visual = specific graphic designer directions. CRITICAL: Every table row MUST be ONE PHYSICAL LINE. Use <br> for all internal line breaks."},
             {"role": "user", "content": prompt}
         ],
-        model="llama-3.1-8b-instant",
         temperature=0.7,
-        max_tokens=2000,
+        max_tokens=8192,
     )
-    return r.choices[0].message.content
+    return response.choices[0].message.content
+
 
 
 def _generate_single_module_type2(client, module_num: int, total_modules: int, design_doc: str, intake_data: Dict, content: str, strategies: Dict) -> str:
@@ -339,16 +343,17 @@ MODULE {module_num}: [Title from Design Doc]
 
 Generate 5-8 rows for Module {module_num} now:"""
 
-    r = client.chat.completions.create(
+    response = client.chat.completions.create(
+        model="gemini-3.5-flash",
         messages=[
-            {"role": "system", "content": "You are a senior eLearning Storyboard Developer. Write production-ready storyboards. On-screen text = real learner content. Audio = actual narrator script. Visual = specific developer directions. No AI slop. CRITICAL: Every table row MUST be ONE PHYSICAL LINE. Use <br> for all internal line breaks."},
+            {"role": "system", "content": "You are a senior eLearning Storyboard Developer. NEVER summarize or skip content. Be extremely detailed. OST = real learner text. Audio = actual narrator script. Visual = specific graphic designer directions. CRITICAL: Every table row MUST be ONE PHYSICAL LINE. Use <br> for all internal line breaks."},
             {"role": "user", "content": prompt}
         ],
-        model="llama-3.1-8b-instant",
         temperature=0.7,
-        max_tokens=2000,
+        max_tokens=8192,
     )
-    return r.choices[0].message.content
+    return response.choices[0].message.content
+
 
 
 @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=3, min=5, max=60), reraise=True)
@@ -363,7 +368,7 @@ def generate_storyboard(api_key: str, design_doc: str, intake_data: Dict, conten
         if not api_key:
             raise HTTPException(status_code=401, detail="Groq API key is missing")
 
-        client = Groq(api_key=api_key)
+        client = OpenAI(api_key=api_key, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
         strategies = get_strategy_for_level(intake_data.get('interactivity_level', ''))
         num_modules = int(intake_data.get('num_modules', 3))
 
@@ -372,6 +377,8 @@ def generate_storyboard(api_key: str, design_doc: str, intake_data: Dict, conten
         course_title = intake_data.get('course_title', 'Untitled Course')
         all_modules = []
         all_modules.append(f"# STORYBOARD â€” {course_title}\n")
+        intro = "## Course Overview\n| ON-SCREEN TEXT (OST) | AUDIO NARRATION | VISUAL INSTRUCTIONS & DEVELOPER NOTES |\n| :--- | :--- | :--- |\n| **Welcome to the course!**<br>In this program, you will learn the key concepts outlined in the design document. | Welcome! Let's get started on this learning journey. | Show title screen with engaging graphics. |\n"
+        all_modules.append(intro)
 
         for i in range(1, num_modules + 1):
             module_content = _call_module_with_retry(
@@ -382,7 +389,7 @@ def generate_storyboard(api_key: str, design_doc: str, intake_data: Dict, conten
             # Rate limit delay between modules (Groq free tier)
             # 20s gap prevents TPM (tokens per minute) limit errors with larger outputs
             if i < num_modules:
-                _time.sleep(20)
+                _time.sleep(2)
 
         return "\n\n---\n\n".join(all_modules)
 
@@ -496,14 +503,13 @@ def fix_markdown_tables(text: str) -> str:
     return '\n'.join(final)
 
 
-@retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=2, min=4, max=30), reraise=True)
 def beautify_uploaded_content(api_key: str, content: str, target_type: str, storyboard_type: Optional[str] = None) -> str:
     """Uses AI to format a raw file dump into a professional project document."""
     try:
         if not api_key:
             raise HTTPException(status_code=401, detail="Groq API key is missing")
 
-        client = Groq(api_key=api_key)
+        client = OpenAI(api_key=api_key, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
         
         # Storyboard Format Detection
         is_storyboard_type2 = False
@@ -514,7 +520,6 @@ def beautify_uploaded_content(api_key: str, content: str, target_type: str, stor
                  is_storyboard_type2 = False
             else:
                 # Auto-detect if not explicitly provided
-                # Check for 7-column pattern in first 10,000 characters
                 sample_lines = content[:10000].split('\n')
                 for line in sample_lines:
                     if line.count('|') >= 7: 
@@ -531,7 +536,6 @@ def beautify_uploaded_content(api_key: str, content: str, target_type: str, stor
    - AGGREGATION: You MUST group all content for one module (e.g., Module 1) into exactly ONE row. Use <br> for bullet points.
    - DO NOT create multiple rows for the same module. If you see objectives scattered across lines, MERGE THEM into the 'Learning Objectives' cell."""
 
-        # Type 1 Storyboard Rules (3 Columns)
         type1_storyboard_rules = """
 2. TARGET DOCUMENT: Storyboard (3-Column Format)
    - You MUST act as a STRICT LITERAL MAPPER.
@@ -547,7 +551,6 @@ def beautify_uploaded_content(api_key: str, content: str, target_type: str, stor
    - DO NOT combine multiple screens into one table.
    - DO NOT summarize or truncate. Output the ENTIRE document exactly as provided."""
 
-        # Type 2 Storyboard Rules (7 Columns)
         type2_storyboard_rules = """
 2. TARGET DOCUMENT: Storyboard (7-Column Format)
    - You MUST act as a STRICT LITERAL MAPPER for this tabular format.
@@ -565,13 +568,45 @@ def beautify_uploaded_content(api_key: str, content: str, target_type: str, stor
         else:
             type_rules = type1_storyboard_rules
 
-        overview_rule = ""
-        if target_type == "design_doc":
-            overview_rule = '4. STRUCTURE: Add a professional "PROJECT INFORMATION" and "COURSE OVERVIEW" section at the VERY TOP.'
-        else:
-            overview_rule = '4. STRUCTURE: DO NOT include Project Information or Course Overview. Start directly with the first Module or Screen header.'
+        # === THE ENHANCEMENT FIX: Chunking the Input ===
+        max_chunk_chars = 18000
+        paragraphs = content.split('\n\n')
+        chunks = []
+        current_chunk = ""
+        for p in paragraphs:
+            if len(current_chunk) + len(p) > max_chunk_chars and current_chunk:
+                chunks.append(current_chunk)
+                current_chunk = p
+            else:
+                current_chunk += "\n\n" + p if current_chunk else p
+        if current_chunk:
+            chunks.append(current_chunk)
 
-        prompt = f"""You are an expert Instructional Designer. 
+        print(f"Beautifying uploaded content in {len(chunks)} chunks...")
+        
+        # --- NEW: Localized Retry Logic ---
+        # This only retries the specific chunk that fails, avoiding the "death spiral"
+        @retry(stop=stop_after_attempt(15), wait=wait_exponential(multiplier=2, min=15, max=60), reraise=True)
+        def generate_chunk(prompt_text):
+            return client.chat.completions.create(
+                model="gemini-3.5-flash",
+                messages=[
+                    {"role": "system", "content": "You are a master Instructional Designer. You follow structural and formatting constraints perfectly. You never put non-table data inside a table."},
+                    {"role": "user", "content": prompt_text}
+                ],
+                temperature=0.1,
+                max_tokens=8192,
+            ).choices[0].message.content
+            
+        full_result = ""
+        
+        for idx, chunk in enumerate(chunks):
+            if target_type == "design_doc" and idx == 0:
+                overview_rule = '4. STRUCTURE: Add a professional "PROJECT INFORMATION" and "COURSE OVERVIEW" section at the VERY TOP.'
+            else:
+                overview_rule = '4. STRUCTURE: DO NOT include Project Information or Course Overview. Start directly with the first Module or Screen header.'
+
+            prompt = f"""You are an expert Instructional Designer. 
 I have extracted raw text from an uploaded file (likely an Excel or PPTX). 
 
 TASK:
@@ -598,28 +633,23 @@ STRICT RULES:
    - Do NOT add introductory text. Just the Markdown doc.
    - Do NOT use heading syntax (# or ##) on any line that contains pipe characters (|).
 
-RAW EXTRACTED CONTENT:
-{content[:25000]}
+RAW EXTRACTED CONTENT (PART {idx+1} of {len(chunks)}):
+{chunk}
 
 Generate the professional {doc_name} Markdown now:"""
 
-        # Using the most powerful 70B model for multi-instruction adherence
-        print("Using Llama-3.3-70b-versatile for High-Precision Beautify...")
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": "You are a master Instructional Designer. You follow structural and formatting constraints perfectly. You never put non-table data inside a table."},
-                {"role": "user", "content": prompt}
-            ],
-            model="llama-3.3-70b-versatile",
-            temperature=0.1, 
-            max_tokens=8000,
-        )
-        result = chat_completion.choices[0].message.content
-        return fix_markdown_tables(result)
+            # Using our new localized retry function
+            chunk_text = generate_chunk(prompt)
+            
+            if full_result:
+                full_result += "\n\n" + chunk_text
+            else:
+                full_result = chunk_text
+                
+            if idx < len(chunks) - 1:
+                _time.sleep(15)
+
+        return fix_markdown_tables(full_result)
             
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error beautifying content: {str(e)}")
-
-
-
-

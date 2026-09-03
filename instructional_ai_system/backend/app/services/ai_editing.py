@@ -1,4 +1,4 @@
-﻿"""
+"""
 StoryBoard AI â€” Document Editing Engine v4
 ==========================================
 - Structural cell navigation (no search/replace guessing)
@@ -8,10 +8,13 @@ StoryBoard AI â€” Document Editing Engine v4
 - Selection-aware: accepts selected_text + screen_num + col_index from frontend
 - Intent classifier won't fire on casual messages
 """
-
+from tenacity import retry, stop_after_attempt, wait_exponential
 import json, re, os, difflib
 from typing import List, Dict, Tuple
 import requests
+import time
+from openai import OpenAI
+
 
 # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # 1. Document Parsing
@@ -198,10 +201,12 @@ def replace_cell(section: Dict, target_row_id: str, col_index: int, new_content:
         for idx, cells in rows:
             if cells:
                 norm_cell = _normalize_label(cells[0])
-                # Exact or fuzzy match (contains)
-                if norm_row_target == norm_cell or norm_row_target in norm_cell or norm_cell in norm_row_target:
+                fallback_row = _normalize_label(f"Row {idx+1}")
+                # Exact or fuzzy match (contains), and check if it matches the fallback Row number
+                if norm_row_target == norm_cell or norm_row_target in norm_cell or norm_cell in norm_row_target or norm_row_target == fallback_row:
                     line_idx_to_update, cells_to_update = idx, cells
                     break
+
                 
                 # Fallback: if row_match_target is very short (shorthand), check if it matches start of cell
                 if len(norm_row_target) > 3 and norm_cell.startswith(norm_row_target):
@@ -256,13 +261,15 @@ def doc_summary(sections: List[Dict], doc_type: str = "Design Document") -> str:
     for s in sections:
         if s["type"] in ["screen", "module", "table"]:
             rows = get_table_rows(s.get("table_lines", []))
-            for _, cells in rows:
+            for idx, (_, cells) in enumerate(rows):
                 base_label = s.get("id") or "Table"
-                row_label = cells[0].strip() if cells else "Row"
+                row_label = cells[0].strip() if cells else ""
                 
-                # If it's Type 1, the base_label is already unique (e.g. Screen 1.1)
-                # If it's Type 2, the rows need the base_label + row_label for uniqueness
-                if len(rows) > 1 and row_label:
+                # Assign a numbered row label if it's blank so the AI can target it!
+                if not row_label:
+                    row_label = f"Row {idx+1}"
+                    
+                if len(rows) > 1:
                     label = f"{base_label} | {row_label}"
                 else:
                     label = base_label
@@ -270,7 +277,9 @@ def doc_summary(sections: List[Dict], doc_type: str = "Design Document") -> str:
                 out.append(f"\n--- {label} ---")
                 for i, c in enumerate(cells[:7]):
                     col_name = cn[i] if i < len(cn) else f"col{i}"
-                    out.append(f"  {col_name}: {c.strip()[:200]}")
+                    # Remove the [:200] truncation so the AI sees the full text
+                    out.append(f"  {col_name}: {c.strip()}")
+
     return "\n".join(out)
 
 
@@ -345,21 +354,31 @@ Return ONLY JSON:
 }"""
 
 
-def classify_intent(instruction: str, history: List[Dict], groq_key: str) -> Dict:
+def classify_intent(instruction: str, history: List[Dict], gemini_key: str) -> Dict:
     try:
-        from groq import Groq
-        client = Groq(api_key=groq_key)
-        msgs = [{"role": "system", "content": CLASSIFIER_SYS}]
+        client = OpenAI(api_key=gemini_key, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
+        
+        prompt = f"System: {CLASSIFIER_SYS}\n\n"
         if history:
-            for m in history[-6:]: msgs.append({"role": m["role"], "content": m["content"]})
-        msgs.append({"role": "user", "content": f"CLASSIFY: {instruction}"})
-        r = client.chat.completions.create(model="llama-3.1-8b-instant", messages=msgs,
-                                           response_format={"type": "json_object"}, max_tokens=250)
-        return json.loads(r.choices[0].message.content)
+            for m in history[-6:]: prompt += f"{m['role']}: {m['content']}\n"
+        prompt += f"User: CLASSIFY: {instruction}"
+
+        @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10), reraise=True)
+        def call_classifier():
+            return client.chat.completions.create(
+                model="gemini-3.5-flash",
+                messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"},
+                temperature=0.0
+            )
+        
+        response = call_classifier()
+        return json.loads(response.choices[0].message.content)
+
     except Exception as e:
         print(f"Classifier error: {e}")
         action_words = ["change","update","edit","fix","make","rewrite","shorten","expand",
-                        "replace","modify","improve","creative","shorter","longer","rephrase"]
+                        "replace","modify","improve","creative","shorter","longer","rephrase", "enhance"]
         if any(w in instruction.lower() for w in action_words):
             screen = None
             for msg in reversed(history or []):
@@ -368,12 +387,12 @@ def classify_intent(instruction: str, history: List[Dict], groq_key: str) -> Dic
             return {"intent":"EDIT","target_screens":[screen] if screen else [],
                     "col_hint":None,"chat_reply":""}
         return {"intent":"CHAT","target_screens":[],"col_hint":None,
-                "chat_reply":"I'm here to help! I can update your storyboard screens â€” just let me know what needs to change."}
+                "chat_reply":"I'm here to help! I can update your storyboard screens — just let me know what needs to change."}
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ——————————————————————————————————————————————————————————————————————————
 # 5. Edit LLM Prompt
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ——————————————————————————————————————————————————————————————————————————
 
 EDIT_SYS = """You are an expert Instructional Design Assistant for eLearning designers. You help with course structure, storyboard writing, knowledge checks, scenarios, style guides, language variants, readability, and production-ready learning content.
 
@@ -400,8 +419,9 @@ RULES:
 5a. Preserve table structure exactly: do not add or remove columns, and keep cell line breaks as <br>.
 6. CRITICAL: If the user asks to edit MULTIPLE columns (e.g. "update OST and Audio"), you MUST return MULTIPLE separate objects in the `edits` array (one for each `col_index`).
 7. Read the user's request carefully. Do not miss requested columns. If a request fits multiple rows (e.g. "update all activities"), return an object for EACH row.
+8. FATAL ERROR PREVENTION: You will receive multiple targets in the CURRENT CONTENT section. You MUST process EVERY SINGLE target shown. If there are 3 screens/targets in the context, your 'edits' array MUST contain edit objects for ALL 3 of them. If you skip any target or stop after editing just one, the system will crash. DO NOT BE LAZY. You must loop through and edit every target provided.
 
-RESPONSE â€” STRICT JSON ONLY:
+RESPONSE — STRICT JSON ONLY:
 {
   "reasoning": "...", "assistant_reply": "...",
   "edits": [
@@ -412,9 +432,9 @@ RESPONSE â€” STRICT JSON ONLY:
 }"""
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ——————————————————————————————————————————————————————————————————————————
 # 6. Main Entry Point
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ——————————————————————————————————————————————————————————————————————————
 
 def ai_edit_document(
     api_key: str,
@@ -427,20 +447,21 @@ def ai_edit_document(
     selected_screen_num: str = None,
     selected_col_index: int = None,
     selected_col_name: str = None,
+    file_context: str = None,
 ) -> Dict:
-    groq_key = api_key or os.environ.get("GROQ_API_KEY", "")
+    gemini_key = api_key or os.environ.get("GEMINI_API_KEY", "")
     history = chat_history or []
     API_URL = "https://backend.buildpicoapps.com/aero/run/llm-api?pk=v1-Z0FBQUFBQnBtS2ptdFNtblZXcldCVV80M2ZLbElhOHhGMzd1Z1c1NWpiMXdfMU5uX3VVWkR5Q0N3OGEwUElfNWRIWVI3QkFxQ2FCU2ZRV0JLSVBja2dBaXR6dTN2WktVZVE9PQ=="
 
     def fail(msg): return {"assistant_reply": msg, "updated_document": current_doc,
                            "original_document": current_doc, "is_edit": False, "diff": []}
 
-    # â”€â”€ Step 1: Intent â”€â”€
+    # ——— Step 1: Intent ———
     dt_lower = doc_type.lower()
     is_sb_type2 = "type 2" in dt_lower
     is_storyboard = "storyboard" in dt_lower and not is_sb_type2
 
-    # If frontend provides explicit selection context, skip classifier â€” it's always an EDIT
+    # If frontend provides explicit selection context, skip classifier — it's always an EDIT
     if selected_screen_num is not None and selected_col_index is not None:
         col_name = selected_col_name
         if not col_name:
@@ -461,7 +482,7 @@ def ai_edit_document(
             "chat_reply": ""
         }
     else:
-        intent_data = classify_intent(user_instruction, history, groq_key)
+        intent_data = classify_intent(user_instruction, history, gemini_key)
 
     if intent_data.get("intent") == "CHAT":
         return {
@@ -472,7 +493,7 @@ def ai_edit_document(
             "diff": []
         }
 
-    # â”€â”€ Step 2: Resolve screens/modules â”€â”€
+    # ——— Step 2: Resolve screens/modules ———
     sections = parse_document_into_sections(current_doc)
     dt_lower = doc_type.lower()
     is_sb_type2 = "type 2" in dt_lower
@@ -482,11 +503,16 @@ def ai_edit_document(
     # If it's a Design Doc or Type 2 SB, we also look into tables for modules/sections
     if not is_storyboard:
         for s in sections:
-            if s["type"] == "table":
+            if s["type"] in ["table", "module", "screen"]:
                 rows = get_table_rows(s["table_lines"])
-                for _, cells in rows:
-                    if cells and cells[0].strip():
-                        all_targets.append(cells[0].strip())
+                sect_id = s.get("id")
+                for idx, (_, cells) in enumerate(rows):
+                    if cells:
+                        row_label = cells[0].strip() if cells[0].strip() else f"Row {idx+1}"
+                        if sect_id:
+                            all_targets.append(f"{sect_id} | {row_label}")
+                        else:
+                            all_targets.append(row_label)
 
     targets = intent_data.get("target_screens") or []
     
@@ -517,9 +543,13 @@ def ai_edit_document(
                             else:
                                 targets.append(lbl)
 
+    if any(w in user_instruction.lower() for w in ["storyboard", "document", "all", "entire", "everything"]):
+        targets = ["ALL"]
+    
     if not targets:
-        # Fallback to any distinct word that might be a section label in Type 2
-        if is_sb_type2:
+        if any(w in user_instruction.lower() for w in ["module", "enhance", "changes"]):
+            targets = ["ALL"]
+        elif is_sb_type2:
             for s in sections:
                 rows = get_table_rows(s.get("table_lines", []))
                 for _, cells in rows:
@@ -542,7 +572,7 @@ def ai_edit_document(
             if is_storyboard and re.match(r"^\d+\.\d+$", t): expanded.append(f"{t}") # Keep raw as we match on id
             else: expanded.append(t)
 
-    # â”€â”€ Step 3: Build LLM context â”€â”€
+    # ——— Step 3: Build LLM context ———
     if is_storyboard:
         cn = ["OST", "Audio Narration", "Visual Instructions"]
     elif is_sb_type2:
@@ -558,61 +588,108 @@ def ai_edit_document(
         col_display_name = selected_col_name or (cn[selected_col_index] if selected_col_index < len(cn) else f"Column {selected_col_index}")
         selection_ctx = f"### USER HAS SELECTED THIS SPECIFIC TEXT ###\nSelected text: \"{selected_text}\"\nTarget: {selected_screen_num}\nPrimary Column selected: {col_display_name} (Index: {selected_col_index})\n\nINSTRUCTION: The user selected this text, but they might ask you to edit this column OR multiple columns in the row. Return an edit object for EVERY column that needs to change based on their request."
 
-    # Target content
-    ctx = "\n### CURRENT CONTENT ###\n"
-    found_targets = False
-    for t in expanded:
-        header_t = t
-        row_t = None
-        if " | " in t:
-            header_t, row_t = t.split(" | ", 1)
-
-        for s in sections:
-            sect_id = s.get("id") or ""
-            sect_title = s.get("title_line") or ""
-            match_header = (header_t.lower() in sect_id.lower() or 
-                            header_t.lower() in sect_title.lower() or
-                            sect_id.lower() in header_t.lower())
-            
-            if match_header:
-                rows = get_table_rows(s.get("table_lines", []))
-                for _, cells in rows:
-                    row_label = cells[0] if cells else ""
-                    # Match row if row_t is present, otherwise match any row (standard behavior)
-                    if not row_t or (row_label.lower() == row_t.lower() or 
-                                    re.search(r'\b' + re.escape(row_t) + r'\b', row_label, re.IGNORECASE)):
-                        found_targets = True
-                        label = f"{sect_id} | {row_label}" if sect_id else row_label
-                        ctx += f"\n--- {label} ---\n"
-                        for i, c in enumerate(cells[:len(cn)]):
-                            ctx += f"  col_index {i} ({cn[i]}): {c.strip()}\n"
+    # Target content chunking
+    chunk_size = 3
+    expanded_chunks = [expanded[i:i+chunk_size] for i in range(0, len(expanded), chunk_size)] if expanded else [[]]
     
-    if not found_targets or len(expanded) > 10:
-        ctx = f"\n### DOCUMENT SUMMARY ###\n{doc_summary(sections, doc_type)}"
+    all_edits = []
+    assistant_replies = []
+    
+    for chunk in expanded_chunks:
+        ctx = "\n### CURRENT CONTENT ###\n"
+        found_targets = False
+        for t in chunk:
+            header_t = t
+            row_t = None
+            if " | " in t:
+                header_t, row_t = t.split(" | ", 1)
 
-    hist_str = ""
-    if history:
-        hist_str = "\n### RECENT CONVERSATION ###\n"
-        for m in history[-6:]:
-            hist_str += f"{'User' if m['role']=='user' else 'Assistant'}: {m['content']}\n"
+            for s in sections:
+                sect_id = s.get("id") or ""
+                sect_title = s.get("title_line") or ""
+                match_header = (header_t.lower() in sect_id.lower() or 
+                                header_t.lower() in sect_title.lower() or
+                                sect_id.lower() in header_t.lower())
+                
+                if match_header:
+                    rows = get_table_rows(s.get("table_lines", []))
+                    for idx, (_, cells) in enumerate(rows):
+                        row_label = cells[0].strip() if cells else ""
+                        if not row_label:
+                            row_label = f"Row {idx+1}"
+                        if not row_t or (row_label.lower() == row_t.lower() or 
+                                        re.search(r'\b' + re.escape(row_t) + r'\b', row_label, re.IGNORECASE)):
+                            found_targets = True
+                            label = f"{sect_id} | {row_label}" if sect_id else row_label
+                            ctx += f"\n--- {label} ---\n"
+                            for i, c in enumerate(cells[:len(cn)]):
+                                ctx += f"  col_index {i} ({cn[i]}): {c.strip()}\n"
+        
+        if not found_targets or len(chunk) > 100:
+            ctx = f"\n### DOCUMENT SUMMARY ###\n{doc_summary(sections, doc_type)}"
 
-    # Add specific hint for Type 2
-    type2_hint = ""
-    if is_sb_type2:
-        type2_hint = "\nIMPORTANT: This is a Storyboard Type 2 (7 columns). Ensure you map the row 'Header | Row' label correctly and use the specific column indices (Topics=1, Visuals=2, OST=3, Audio=4)."
+        hist_str = ""
+        if history:
+            hist_str = "\n### RECENT CONVERSATION ###\n"
+            for m in history[-6:]:
+                hist_str += f"{'User' if m['role']=='user' else 'Assistant'}: {m['content']}\n"
 
-    user_prompt = f"USER REQUEST: {user_instruction}\n{hist_str}\n{selection_ctx}\n{ctx}{type2_hint}\nTARGETS: {expanded or 'Determine from request'}\nCOL HINT: {intent_data.get('col_hint')}\nDOCUMENT TYPE: {doc_type}"
+        type2_hint = ""
+        if is_sb_type2:
+            type2_hint = "\nIMPORTANT: This is a Storyboard Type 2 (7 columns). Ensure you map the row 'Header | Row' label correctly and use the specific column indices (Topics=1, Visuals=2, OST=3, Audio=4)."
+        
+        context_str = ""
+        if file_context:
+            context_str = f"\n### PROVIDED REFERENCE FILE CONTENT ###\n{file_context}\n"
+        
+        user_prompt = f"USER REQUEST: {user_instruction}\n{hist_str}\n{context_str}\n{selection_ctx}\n{ctx}{type2_hint}\nTARGETS: {chunk or 'Determine from request'}\nCOL HINT: {intent_data.get('col_hint')}\nDOCUMENT TYPE: {doc_type}"
+        
+        if len(chunk) > 1:
+            user_prompt += f"\n\nWARNING: You have {len(chunk)} targets to edit! You MUST generate at least {len(chunk)} edit objects in your JSON response. Do not stop after editing just one."
 
-    # â”€â”€ Step 4: Call LLM â”€â”€
-    try:
-        full_prompt = EDIT_SYS + "\n\n" + user_prompt
-        resp = requests.post(API_URL, json={"prompt": full_prompt},
-                             headers={"Content-Type": "application/json"}, timeout=60)
-        data = resp.json()
-        if data.get("status") != "success": raise Exception(str(data))
-        parsed = _extract_json(data.get("text", ""))
-    except Exception as e:
-        return fail(f"AI call failed: {str(e)}")
+        # ——— Step 4: Call LLM ———
+        # ── Step 4: Call LLM ──
+        time.sleep(2)
+        try:
+            full_prompt = EDIT_SYS + "\n\n" + user_prompt
+            
+            client = OpenAI(api_key=gemini_key, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
+
+            @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10), reraise=True)
+            def call_editor():
+                return client.chat.completions.create(
+                    model="gemini-3.5-flash",
+                    messages=[{"role": "user", "content": full_prompt}],
+                    response_format={"type": "json_object"},
+                    temperature=0.5
+                )
+            
+            response = call_editor()
+            ai_text = response.choices[0].message.content
+
+            
+            # 4. Save to debug file
+            with open("c:/e_learning/llm_debug.txt", "a", encoding="utf-8") as f:
+                f.write("\n=== CHUNK LLM OUTPUT (GROQ) ===\n")
+                f.write(ai_text)
+                f.write("\n======================\n")
+
+            # 5. Apply the edits
+            parsed = _extract_json(ai_text)
+            if parsed.get("edits"):
+                all_edits.extend(parsed.get("edits"))
+            if parsed.get("assistant_reply"):
+                assistant_replies.append(parsed.get("assistant_reply"))
+        except Exception as e:
+            print(f"AI chunk call failed: {e}")
+            assistant_replies.append(f"⚠️ Error connecting to AI: {e}")
+
+            
+    parsed = {
+        "is_edit": len(all_edits) > 0,
+        "edits": all_edits,
+        "assistant_reply": assistant_replies[0] if assistant_replies else "Done!"
+    }
 
     # â”€â”€ Step 5: Apply â”€â”€
     if not parsed.get("is_edit") or not parsed.get("edits"):
@@ -674,9 +751,14 @@ def ai_edit_document(
             norm_sect_title = _normalize_label(sect_title)
             norm_header_sn = _normalize_label(header_sn)
 
-            match_header = (norm_header_sn in norm_sect_id or 
-                            norm_header_sn in norm_sect_title or
-                            norm_sect_id in norm_header_sn)
+            match_header = False
+            if norm_sect_id:
+                match_header = (norm_header_sn in norm_sect_id or 
+                                norm_header_sn in norm_sect_title or
+                                norm_sect_id in norm_header_sn)
+            elif norm_sect_title:
+                match_header = norm_header_sn in norm_sect_title
+
             
             if match_header:
                 if not row_sn:

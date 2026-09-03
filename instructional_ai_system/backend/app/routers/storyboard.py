@@ -18,7 +18,7 @@ def generate_storyboard_stream(project_id: str, storyboard_type: str = "Type 1",
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    api_key = os.getenv("GROQ_API_KEY")
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GROQ_API_KEY")
     if not api_key:
         raise HTTPException(status_code=500, detail="Server misconfiguration: missing Groq API Key")
 
@@ -47,8 +47,8 @@ def generate_storyboard_stream(project_id: str, storyboard_type: str = "Type 1",
         return StreamingResponse(upload_event_stream(), media_type="text/event-stream")
 
     # Standard module-by-module generation for AI-generated projects
-    from groq import Groq
-    client = Groq(api_key=api_key)
+    from openai import OpenAI
+    client = OpenAI(api_key=api_key, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
     strategies = ai_generation.get_strategy_for_level(intake_data.get('interactivity_level', ''))
     num_modules = int(intake_data.get('num_modules', 3))
     generate_fn = ai_generation._generate_single_module_type1 if storyboard_type == "Type 1" else ai_generation._generate_single_module_type2
@@ -79,7 +79,7 @@ def generate_storyboard_stream(project_id: str, storyboard_type: str = "Type 1",
 
             # Rate limit delay — only between modules (not after last)
             if i < num_modules:
-                time.sleep(2)
+                time.sleep(15)
 
         # Assemble final storyboard
         full_storyboard = "\n\n---\n\n".join(all_modules)

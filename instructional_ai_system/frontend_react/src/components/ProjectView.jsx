@@ -3,8 +3,10 @@ import { api } from '../api';
 import { marked } from 'marked';
 import TurndownService from 'turndown';
 import { gfm } from 'turndown-plugin-gfm';
-import { ArrowLeft, Save, Download, FileText, Send, Loader, Layout, Edit3, CheckCircle, RefreshCw, ShieldCheck, MessageSquare, X, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Save, Download, FileText, Send, Loader, Layout, Edit3, CheckCircle, RefreshCw, ShieldCheck, MessageSquare, X, Eye, EyeOff, Paperclip, BookOpen } from 'lucide-react';
 import * as Diff from 'diff';
+import { Mic, Square } from 'lucide-react';
+import GrammarTextarea from './GrammarTextarea';
 
 marked.use({ gfm: true });
 
@@ -123,6 +125,7 @@ export default function ProjectView({ projectId, onBack }) {
     const [sbSaveStatus, setSbSaveStatus] = useState('');
     const [sbProgress, setSbProgress] = useState(null);
 
+
     // AI Copilot
     const [copilotOpen, setCopilotOpen] = useState(false);
     const [chatInput, setChatInput] = useState('');
@@ -130,11 +133,17 @@ export default function ProjectView({ projectId, onBack }) {
     const [chatLoading, setChatLoading] = useState(false);
     const [pendingEdit, setPendingEdit] = useState(null); // { newContent, originalContent, docType, assistantReply }
     const [selectionContext, setSelectionContext] = useState(null); // { text, screenNum, colIndex, rect }
+    const [fileContext, setFileContext] = useState(null);
+    const [fileUploading, setFileUploading] = useState(false);
     const ddEditorRef = useRef(null);
     const sbEditorRef = useRef(null);
     const chatRef = useRef(null);
     const selectionTooltipRef = useRef(null);
     const copilotPanelRef = useRef(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const mediaRecorder = useRef(null);
+    const audioChunks = useRef([]);
+
 
     useEffect(() => { fetchProject(); }, [projectId]);
     useEffect(() => { if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight; }, [chatMessages]);
@@ -216,7 +225,7 @@ export default function ProjectView({ projectId, onBack }) {
                     const table = node.closest('table');
                     const ths = table.querySelectorAll('thead th');
                     const colName = ths[colIndex]?.textContent.trim() || '';
-                    
+
                     setSelectionContext({ text, screenNum: targetID, colIndex, colName, rect });
                 }
             }
@@ -276,7 +285,9 @@ export default function ProjectView({ projectId, onBack }) {
     // Clean markdown
     const cleanMarkdown = useCallback((text) => {
         return (text || '')
-            .replace(/<br>/g, '<br/>')
+            .replace(/&lt;br\s*\/?&gt;/gi, '<br/>')
+            .replace(/\\<br>/gi, '<br/>')
+            .replace(/<br>/gi, '<br/>')
             .replace(/^[=]{5,}$/gm, '')
             .replace(/^[-]{5,}$/gm, '')
             .replace(/---\s*START OF DOCUMENT\s*---/gi, '')
@@ -416,6 +427,8 @@ export default function ProjectView({ projectId, onBack }) {
 
     const downloadSb = async () => { await api.request(`/export/${projectId}/storyboard`, { method: 'GET' }); };
 
+
+
     // --- COPILOT ---
     const copilotDocType = activeTab === 'storyboard' ? (sbType === 'Type 2' ? 'Storyboard Type 2' : 'storyboard') : 'design_doc';
     const copilotLabel = activeTab === 'storyboard' ? (sbType === 'Type 2' ? 'Storyboard Type 2' : 'Storyboard') : 'Design Document';
@@ -434,6 +447,12 @@ export default function ProjectView({ projectId, onBack }) {
         setChatInput(''); setChatLoading(true);
         try {
             const currentContent = copilotDocType === 'design_doc' ? ddContent : sbContent;
+            // TRUNCATE: Prevent the PDF from crashing the AI
+            const maxContextLength = 1500;
+            const safeFileContext = fileContext && fileContext.length > maxContextLength
+                ? fileContext.substring(0, maxContextLength) + "\n\n[...TRUNCATED DUE TO LENGTH...]"
+                : fileContext;
+
             const payload = {
                 doc_type: copilotDocType,
                 user_prompt: userInput,
@@ -441,8 +460,10 @@ export default function ProjectView({ projectId, onBack }) {
                 selected_text: selectionContext?.text,
                 selected_screen_num: selectionContext?.screenNum,
                 selected_col_index: selectionContext?.colIndex,
-                selected_col_name: selectionContext?.colName
+                selected_col_name: selectionContext?.colName,
+                file_context: safeFileContext
             };
+
             const res = await api.request(`/edit/chat?project_id=${projectId}`, {
                 method: 'POST', body: JSON.stringify(payload)
             });
@@ -500,6 +521,7 @@ export default function ProjectView({ projectId, onBack }) {
             setChatLoading(false);
             // Clear the pinned selection context after sending to avoid confusion
             setSelectionContext(null);
+            // DO NOT clear fileContext so the user can continue editing with the same PDF!
         }
     };
 
@@ -544,8 +566,8 @@ export default function ProjectView({ projectId, onBack }) {
                                 const isChecked = (intakeForm[field] || '').split(', ').includes(opt);
                                 return (
                                     <label key={opt} className="flex items-center gap-2 text-sm cursor-pointer hover:bg-slate-50 p-1 rounded m-0">
-                                        <input 
-                                            type="checkbox" 
+                                        <input
+                                            type="checkbox"
                                             checked={isChecked}
                                             onChange={(e) => {
                                                 let current = (intakeForm[field] || '').split(', ').filter(Boolean);
@@ -575,6 +597,81 @@ export default function ProjectView({ projectId, onBack }) {
         if (type === 'range') return <div><label className="form-label">{label}: {intakeForm[field] || 3}</label><input type="range" className="w-full" min="3" max="12" value={intakeForm[field] || 3} onChange={e => handleIntakeChange(field, e.target.value)} style={{ accentColor: 'var(--primary)' }} /></div>;
         if (type === 'smallRange') return <div><label className="form-label">{label}: {intakeForm[field] || 3}</label><input type="range" className="w-full" min="1" max="8" value={intakeForm[field] || 3} onChange={e => handleIntakeChange(field, e.target.value)} style={{ accentColor: 'var(--primary)' }} /></div>;
         return <div><label className="form-label">{label}</label><input type="text" className="form-control" value={intakeForm[field] || ''} onChange={e => handleIntakeChange(field, e.target.value)} /></div>;
+    };
+
+    const handleFileUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setFileUploading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:8000/api' : '/api';
+            const response = await fetch(`${BASE_URL}/extraction/extract-text-only`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                body: formData
+            });
+            const data = await response.json();
+            if (data.text) {
+                setFileContext(data.text);
+                setChatMessages(prev => [...prev, { role: 'system', text: `📎 Attached file: ${file.name}` }]);
+            }
+        } catch (err) {
+            alert('Failed to upload file');
+        } finally {
+            setFileUploading(false);
+            e.target.value = null; // reset input
+        }
+    };
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder.current = new MediaRecorder(stream);
+            audioChunks.current = [];
+
+            mediaRecorder.current.ondataavailable = (event) => {
+                if (event.data.size > 0) audioChunks.current.push(event.data);
+            };
+
+            mediaRecorder.current.onstop = async () => {
+                const audioBlob = new Blob(audioChunks.current, { type: 'audio/webm' });
+
+                const formData = new FormData();
+                formData.append("audio", audioBlob, "recording.webm");
+
+                try {
+                    const BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:8000/api' : '/api';
+                    const res = await fetch(`${BASE_URL}/speech-to-text/`, {
+                        method: "POST",
+                        body: formData,
+                    });
+                    const data = await res.json();
+
+                    if (data.text) {
+                        setChatInput(prev => prev ? prev + " " + data.text : data.text);
+                    }
+                } catch (err) {
+                    console.error("Transcription failed", err);
+                }
+
+                stream.getTracks().forEach(track => track.stop());
+            };
+
+            mediaRecorder.current.start();
+            setIsRecording(true);
+        } catch (err) {
+            alert("Please allow microphone access to use Voice Typing!");
+        }
+    };
+
+    const stopRecording = () => {
+        if (mediaRecorder.current && isRecording) {
+            mediaRecorder.current.stop();
+            setIsRecording(false);
+        }
     };
 
     const tabs = [
@@ -688,7 +785,7 @@ export default function ProjectView({ projectId, onBack }) {
                 <div className="card w-full animate-fade-in" style={{ padding: 0, overflow: 'visible' }}>
                     <div className="flex justify-between items-center p-4 border-b" style={{ borderColor: 'var(--border)' }}>
                         <h3 className="text-lg font-bold flex items-center gap-2"><FileText style={{ color: 'var(--primary)' }} size={20} /> Design Document</h3>
-                        <div className="flex gap-2 items-center">
+                        <div className="flex gap-2 items-center flex-wrap justify-end">
                             <span className="text-xs font-medium" style={{ color: 'var(--secondary)' }}>{ddSaveStatus}</span>
                             {ddGenerateLoading && <span className="flex items-center gap-2 text-sm" style={{ color: 'var(--primary)' }}><Loader size={14} className="spinner" /> Regenerating...</span>}
                             <button className="btn btn-outline" onClick={handleRegenerateDd} disabled={ddGenerateLoading}><RefreshCw size={14} /> Regenerate</button>
@@ -758,7 +855,7 @@ export default function ProjectView({ projectId, onBack }) {
                         <>
                             <div className="flex justify-between items-center p-4 border-b" style={{ borderColor: 'var(--border)' }}>
                                 <h3 className="text-lg font-bold flex items-center gap-2"><Layout style={{ color: 'var(--secondary)' }} size={20} /> Storyboard</h3>
-                                <div className="flex gap-2 items-center">
+                                <div className="flex gap-2 items-center flex-wrap justify-end">
                                     <span className="text-xs font-medium" style={{ color: 'var(--secondary)' }}>{sbSaveStatus}</span>
                                     <select className="form-control py-1 px-2 w-auto text-sm" value={sbType} onChange={e => setSbType(e.target.value)} style={{ maxWidth: '180px' }}>
                                         <option value="Type 1">Type 1 (Block)</option>
@@ -771,6 +868,7 @@ export default function ProjectView({ projectId, onBack }) {
                                     }
                                     <button className="btn btn-outline" onClick={openCopilot}><MessageSquare size={14} /> AI Assistant</button>
                                     <button className="btn btn-primary" onClick={downloadSb} style={{ background: 'linear-gradient(135deg, #0EA5E9, #2563EB)' }}><Download size={16} /> Export</button>
+
                                 </div>
                             </div>
                             {isSbEditing && (
@@ -842,10 +940,23 @@ export default function ProjectView({ projectId, onBack }) {
                         </div>
                     )}
 
-                    <div className="p-3 border-t flex gap-2" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg-color)' }}>
-                        <textarea className="form-control m-0" style={{ minHeight: '40px', resize: 'none' }} rows={2} placeholder={`Ask to edit...`} value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChat(); } }} />
-                        <button className="btn btn-primary items-center justify-center p-2" onClick={handleChat} disabled={chatLoading}><Send size={18} /></button>
+                    <div className="p-3 border-t flex gap-2 items-end" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg-color)' }}>
+                        <label className="btn btn-outline flex items-center justify-center p-2 cursor-pointer m-0" style={{ height: '40px' }}>
+                            {fileUploading ? <Loader size={18} className="spinner" /> : <Paperclip size={18} />}
+                            <input type="file" style={{ display: 'none' }} accept=".pdf,.docx,.txt" onChange={handleFileUpload} disabled={fileUploading} />
+                        </label>
+
+                        <div className="flex gap-2 w-full items-end">
+                            <GrammarTextarea className="form-control m-0 w-full" style={{ minHeight: '40px', resize: 'none' }} rows={2} placeholder="Ask to edit... (or use voice)" value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChat(); } }} />
+                            <button className={`btn ${isRecording ? 'btn-danger' : 'btn-outline'} flex-shrink-0 items-center justify-center p-2`} style={{ height: '40px' }} onClick={isRecording ? stopRecording : startRecording} title="Voice Typing">
+                                {isRecording ? <Square size={18} /> : <Mic size={18} />}
+                            </button>
+                        </div>
+
+                        <button className="btn btn-primary items-center justify-center p-2" style={{ height: '40px' }} onClick={handleChat} disabled={chatLoading}><Send size={18} /></button>
                     </div>
+
+
                 </div>
             )}
 
