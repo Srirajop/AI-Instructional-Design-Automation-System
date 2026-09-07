@@ -5,10 +5,13 @@ import os
 
 load_dotenv()
 
+from app.routers import voice
 from . import models
 from .database import engine
 
 from .routers import auth, intake, extraction, design, storyboard, edit, history, export, folders, files
+
+
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -33,6 +36,7 @@ app.include_router(history.router, prefix="/api/history", tags=["history"])
 app.include_router(export.router, prefix="/api/export", tags=["export"])
 app.include_router(folders.router, prefix="/api/folders", tags=["folders"])
 app.include_router(files.router, prefix="/api/files", tags=["files"])
+app.include_router(voice.router, prefix="/api/speech-to-text", tags=["Voice"])
 
 @app.get("/")
 def read_root():

@@ -58,6 +58,11 @@ Thumbs.db
 *.db
 *.sqlite
 
+# Uploads & User Data
+uploads/
+**/uploads/
+*.pdf
+
 # Archives/Logs
 *.log
 *.zip
@@ -70,3 +75,7 @@ precision_results.txt
 selection_test_results.txt
 type2_results.txt
 edit_debug.log
+test_*.js
+test_*.py
+llm_debug.txt
+

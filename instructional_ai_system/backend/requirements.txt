@@ -7,6 +7,8 @@ passlib[bcrypt]
 python-jose[cryptography]
 python-multipart
 groq
+openai
+
 email-validator
 fastapi-mail
 python-docx
@@ -18,3 +20,5 @@ beautifulsoup4
 python-pptx
 tenacity
 json-repair
+markdown
+pdfkit

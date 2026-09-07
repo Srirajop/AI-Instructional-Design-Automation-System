@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from .. import schemas, models
 from ..dependencies import get_db, get_current_user
@@ -13,7 +13,9 @@ def ai_chat_edit(request: schemas.DocumentEditRequest, project_id: str, db: Sess
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
         
-    api_key = os.getenv("GROQ_API_KEY")
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GROQ_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=500, detail="GEMINI_API_KEY is missing.")
     
     # Get chat history for this specific doc type
     chat_history_db = db.query(models.ChatMessage).filter(
@@ -38,7 +40,8 @@ def ai_chat_edit(request: schemas.DocumentEditRequest, project_id: str, db: Sess
         selected_text=request.selected_text,
         selected_screen_num=request.selected_screen_num,
         selected_col_index=request.selected_col_index,
-        selected_col_name=request.selected_col_name
+        selected_col_name=request.selected_col_name,
+        file_context=request.file_context  
     )
     
     # Save assistant message

@@ -127,3 +127,30 @@ def extract_content_remote(
         return {"message": "Extracted successfully", "extracted_length": len(text)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/extract-text-only")
+async def extract_text_only(file: UploadFile = File(...)):
+    ext = pathlib.Path(file.filename).suffix.lower()
+    text = ""
+    
+    with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as temp_file:
+        content = await file.read()
+        temp_file.write(content)
+        temp_path = temp_file.name
+
+    try:
+        if ext == '.pdf':
+            with open(temp_path, 'rb') as f:
+                text = extraction_service.extract_text_from_pdf(f)
+        elif ext in ['.docx']:
+            text = extraction_service.extract_text_from_docx(temp_path)
+        elif ext in ['.txt']:
+            text = extraction_service.extract_text_from_txt(open(temp_path, 'rb'))
+        else:
+            raise HTTPException(status_code=400, detail="Unsupported file format")
+            
+        return {"text": text}
+        
+    finally:
+        os.remove(temp_path)
+
