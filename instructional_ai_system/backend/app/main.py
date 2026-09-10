@@ -8,7 +8,7 @@ load_dotenv()
 from . import models
 from .database import engine
 
-from .routers import auth, intake, extraction, design, storyboard, edit, history, export, folders, files
+from .routers import auth, intake, extraction, design, storyboard, edit, history, export, folders, files, sop
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -33,6 +33,7 @@ app.include_router(history.router, prefix="/api/history", tags=["history"])
 app.include_router(export.router, prefix="/api/export", tags=["export"])
 app.include_router(folders.router, prefix="/api/folders", tags=["folders"])
 app.include_router(files.router, prefix="/api/files", tags=["files"])
+app.include_router(sop.router, prefix="/api/sop", tags=["sop"])
 
 @app.get("/")
 def read_root():

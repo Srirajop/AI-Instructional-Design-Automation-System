@@ -10,6 +10,7 @@ import IntakeForm from './components/IntakeForm';
 import ProjectView from './components/ProjectView';
 import LandingPage from './components/LandingPage';
 import ResetPassword from './components/ResetPassword';
+import SopFormatter from './components/SopFormatter';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 export default function App() {
@@ -136,6 +137,9 @@ export default function App() {
                     projectId={activeProjectId}
                     onBack={() => setCurrentView('projects')}
                   />
+                )}
+                {currentView === 'sop' && (
+                  <SopFormatter />
                 )}
               </main>
             </div>

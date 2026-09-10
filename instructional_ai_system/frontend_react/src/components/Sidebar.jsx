@@ -1,11 +1,12 @@
 import React from 'react';
-import { LayoutDashboard, FolderOpen, FolderTree, LogOut, PlusCircle, UploadCloud } from 'lucide-react';
+import { LayoutDashboard, FolderOpen, FolderTree, LogOut, PlusCircle, UploadCloud, FileCheck } from 'lucide-react';
 
 export default function Sidebar({ currentView, setCurrentView, onLogout }) {
     const menuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
         { id: 'projects', label: 'Projects', icon: <FolderOpen size={20} /> },
         { id: 'folders', label: 'Folders', icon: <FolderTree size={20} /> },
+        { id: 'sop', label: 'SOP Formatter', icon: <FileCheck size={20} /> },
     ];
 
     return (
